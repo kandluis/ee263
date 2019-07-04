@@ -65,6 +65,7 @@
 \date{}
 \maketitle
 \thispagestyle{headandfoot}
+\setcounter{MaxMatrixCols}{15}
 
 \begin{questions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,11 +91,11 @@
     \end{cases}
   \end{align*}
   Note that the above is well-defined since in the problem statement $G_{ii} > 0$.
-  \item We plot $S_i$ and $p_i$ as a function of $t$ in Figure \ref{fig:gamme_3_plots}, with $\gamma = 3$ and the other values as given in the problem statement. In Figure \ref{fig:gamme_5_plots} we repeat the same process but not use $\gamma = 5$.
+  \item We plot $S_i$ and $p_i$ as a function of $t$ in Figure \ref{fig:gamme_3_plots}, with $\gamma = 3$ and the other values as given in the problem statement. In Figure \ref{fig:gamme_5_plots}, we repeat the same process but use $\gamma = 5$.
 
   The observations are quite interesting. When $\gamma = 3.0$ (Figure \ref{fig:gamme_3_plots}), we see that the SINR quickly approachs our target value of $\alpha \gamma = 3.6$ (around $t = 15$). We also note that at this time, the power level for each of the three stations has stabilized.
 
-  However, when $\gamma = 5.0$ (Figure \ref{fig:gamme_5_plots}), we see something quite different. In this case, the SINR appears to stabalize but at a value below our target. As such, the power levels of each station appear to continue to increase.
+  However, when $\gamma = 5.0$ (Figure \ref{fig:gamme_5_plots}), we see something quite different. In this case, the SINR appears to stabilize but at a value below our target. As such, the power levels of each station appear to continue to increase.
 
 \end{enumerate}
 \end{solution}
@@ -123,27 +124,57 @@ The problem gives us the definition of the linear mechanical system as:
 $$
   M\ddot{q} + D\dot{q} + Kq = f
 $$
-where $q(t) \in \mathbb{R}^k$, $f(t) \in \mathbb{R}^k$, $M, D, K \in \mathbb{R}^{k \times k}$. Assuming $M$ is invertible, we wish to write a linear system of equations where the state $x \in \mathbb{R}^{2k}$ and consists of $q$ on top of $\dot{q}$, $u = f$, and $y = q$.
+where $q(t) \in \mathbb{R}^k$, $f(t) \in \mathbb{R}^k$, $M, D, K \in \mathbb{R}^{k \times k}$. Assuming $M$ is invertible, we wish to write a linear system of equations where the state $x = \begin{bmatrix} q \\ \dot{q}  \end{bmatrix} \in \mathbb{R}^{2k}$, $u = f \in \mathbb{R}^{k}$, and $y = q \in \mathbb{R}^{k}$.
 
 The linear system of equations will therefore take the form:
-$$
-  \dot{x} = Ax + Bf, q = Cx + Df
-$$
-where $A \in \mathbb{R}^{2k \times 2k}, B \in \mathbb{R}^{2k \times k}, C \in \mathbb{R}^{k \times 2k}$ and $D \in \mathbb{R}^{k \times k}$. We also define some useful notation. Let $I_k \in \mathbb{R}^{k \times k}$ be the identity matrix in $\mathbb{R}^k$, and similarly, let $0_k \in \mathbb{R}^{k \times k}$ be the zero matrix in $\mathbb{R}^{k \times k}$.
+\begin{align*}
+  \dot{x} = Ax + Bf\\
+  q = Cx + Df
+\end{align*}
+where $A \in \mathbb{R}^{2k \times 2k}, B \in \mathbb{R}^{2k \times k}, C \in \mathbb{R}^{k \times 2k}$ and $D \in \mathbb{R}^{k \times k}$. We also define some useful notation. Let $I_k =
+  \begin{bmatrix}
+    1 & 0 & \cdots  \\
+    0 & 1 & \\
+    \vdots &  & \ddots 
+  \end{bmatrix}
+\in \mathbb{R}^{k \times k}$ be the identity matrix in $\mathbb{R}^k$, and similarly, let $0_k \in \mathbb{R}^{k \times k}$ be the zero matrix in $\mathbb{R}^{k \times k}$.
 
 The output system is the simplest. In this case, we have:
 \begin{align*}
-  D &= 0_k
-  C &= [I_k \mid 0_k]
+  D &= 0_k \\
+  C &=
+    \begin{bmatrix}
+      & \vdots &  & & \vdots &\\
+      \cdots & I_k & \cdots & \cdots & 0_k &  \cdots \\
+       & \vdots &  & &  \vdots &
+    \end{bmatrix}
   \tag{The first $k \times k$ section forms the identity matrix, and the second $k \times k$ section is all zero}
 \end{align*}
 With the above definitions, we have:
 \begin{align*}
-  y = Cx + Du &= [I_k \mid 0_k][q \mid \dot{q}]^T + 0_k f = q
+  y = Cx + Du &= \begin{bmatrix}
+      & \vdots &  & & \vdots &\\
+      \cdots & I_k & \cdots & \cdots & 0_k &  \cdots \\
+       & \vdots &  & &  \vdots &
+    \end{bmatrix}\begin{bmatrix} q \\ \dot{q}  \end{bmatrix} + 0_k f = q
 \end{align*}
 as desired.
 
-For the dynamics equations, we first define a bit of syntax to help with notation. We note that $A \in \mathbb{R}^{2k \times 2k}$ can be divided into four sub-matrices (for each quadrant), $A_{11}, A_{12}, A_{21}, A_{22} \in \mathbb{R}^{k \times k}$. Similarly, $B$ can be decomposed in to two matrices $B_1, B_2 \in \mathbb{R}^{k \times k}$ where $B_1$ contains the top $k$ rows and $B_2$ the bottom $k$ rows. We then have:
+For the dynamics equations, we first define a bit of syntax to help with notation. We note that $A \in \mathbb{R}^{2k \times 2k}$ can be divided into four equally-sized sub-matrices as follows:
+$$
+  A =
+    \begin{bmatrix}
+      A_{11} & A_{12} \\
+      A_{21} & A_{22}
+    \end{bmatrix}
+$$
+where $A_{11}, A_{12}, A_{21}, A_{22} \in \mathbb{R}^{k \times k}$. Similarly, $B$ can be decomposed in to two equally-sized matrices $B_1, B_2 \in \mathbb{R}^{k \times k}$ such that $B =
+  \begin{bmatrix}
+    B_1 \\
+    B_2
+  \end{bmatrix}$
+
+ We then have:
 \begin{align*}
   B_1 &= 0_k \\
   B_2 &= M^{-1} \\
@@ -155,12 +186,47 @@ For the dynamics equations, we first define a bit of syntax to help with notatio
 This gives us:
 \begin{align*}
   \dot{x} &= Ax + Bu  \\
-  &= A[q \mid \dot{q}]^T + Bf \\
-  &= [A_{11}q + A_{12} \dot{q} \mid A_{21}q + A_{22} \dot{q}]^T + [B_1f + B_2 f ]^T \\
-  &= [0_kq + I_k \dot{q} \mid -M^{-1}Kq -M^{-1}D \dot{q}]^T + [0_kf + M^{-1} f ]^T \\
-  &= [\dot{q} \mid -M^{-1}Kq -M^{-1}D\dot{q} + M^{-1} f]^T \\
-  &= [\dot{q} \mid -M^{-1}(f - D\dot{q} - Kq)]^T \\
-  &= [\dot{q} \mid \ddot{q}] \tag{As per problem statement}
+  &= \begin{bmatrix}
+      A_{11} & A_{12} \\
+      A_{21} & A_{22}
+    \end{bmatrix}
+    \begin{bmatrix}
+      q \\
+      \dot{q}
+    \end{bmatrix} +
+    \begin{bmatrix}
+      B_1 \\
+      B_2
+    \end{bmatrix}f \\
+  &=
+    \begin{bmatrix}
+      A_{11}q + A_{12} \dot{q} \\
+      A_{21}q + A_{22} \dot{q} 
+    \end{bmatrix} +
+    \begin{bmatrix}
+      B_1f \\ 
+      B_2 f
+    \end{bmatrix} \\
+  &= \begin{bmatrix}
+    0_kq + I_k \dot{q} \\
+    -M^{-1}Kq -M^{-1}D \dot{q}
+    \end{bmatrix}+ 
+    \begin{bmatrix}
+      0_kf \\
+      M^{-1} f 
+    \end{bmatrix} \\
+  &= \begin{bmatrix}
+    \dot{q} \\
+    -M^{-1}Kq -M^{-1}D\dot{q} + M^{-1} f
+    \end{bmatrix} \\
+  &= \begin{bmatrix}
+    \dot{q} \\
+    -M^{-1}(f - D\dot{q} - Kq)
+    \end{bmatrix} \\
+  &= \begin{bmatrix}
+    \dot{q} \\
+    \ddot{q}
+    \end{bmatrix} \tag{As per problem statement}
 \end{align*}
 This shows our given linear system of equations corresponds to our mechanical system.
 \end{solution}
@@ -169,99 +235,247 @@ This shows our given linear system of equations corresponds to our mechanical sy
 \Q{Some standard time-series models}
 
 \begin{solution}
-We assume the models are single-input, single-output for our discussion below. However, as the remark makes clear, the model we propose is readily extensible to multi-input, multi-output systems by allowing the referenced coefficients to me matrices (and expanding them as such in our models below).
+We assume the models are single-input, single-output for our discussion below. However, as the remark makes clear, the model we propose is readily extensible to multi-input, multi-output systems by allowing the referenced coefficients to be matrices (and expanding them as such in our models below).
 
 \textbf{The MA Model}
-We use the state specified in the problem statement where $x(k) \in \mathbb{R}^r$ is a vector consists of $[u(k-1),\cdots, u(k-r)]^T$. We now define our matrices $A \in \mathbb{R}^{r \times r}, B \in \mathbb{R}^{r \times 1}, C \in \mathbb{R}^{1 \times r}$ and $D \in \mathbb{R}^{1 \times 1}$ as follows:
+We use the state specified in the problem statement where $x(k) =
+  \begin{bmatrix}
+    u(k-1) \\
+    \vdots \\
+     u(k-r)
+  \end{bmatrix} \in \mathbb{R}^r$. We now define our matrices $A \in \mathbb{R}^{r \times r}, B \in \mathbb{R}^{r \times 1}, C \in \mathbb{R}^{1 \times r}$ and $D \in \mathbb{R}^{1 \times 1}$ as follows:
 \begin{align*}
-  D_{11} &= a_0 \\
-  C_{1i} &= a_i, i = 1, \cdots, r \\
-  B_{1i} &=
-    \begin{cases}
-      1 & i = 1 \\
-      0 & \text{otherwise}
-    \end{cases} \\
-  A_{ij} &= 
-    \begin{cases}
-      1 & i = j + 1 \\
-      0 & \text{otherwise}
-    \end{cases} 
+  D &=
+    \begin{bmatrix}
+      a_0
+    \end{bmatrix} \\
+  C &= 
+    \begin{bmatrix}
+      a_1 & \cdots & a_r
+    \end{bmatrix} \\
+  B &=
+    \begin{bmatrix}
+      1 \\
+      0 \\
+      \vdots \\
+      0
+    \end{bmatrix} \\
+  A &= 
+    \begin{bmatrix}
+      0 & 0 & 0 & \cdots  \\
+      1 & 0 & 0 & \cdots \\
+      0 & 1 & 0 & \cdots \\
+      0 & 0 & 1 \\
+      \vdots & \vdots & \vdots & \ddots
+    \end{bmatrix}
+  \tag{$A_{ij} = 1$ when $i = j + 1$} 
 \end{align*}
-With the above, we have:
+We then have:
 \begin{align*}
-  Ax(k) + Bu(k) &= A[u(k-1), \cdots, u(k-r)]^T + Bu(k) \\
-  &= A_1u(k-1) + \cdots + A_r u(k - r) + B_{11}u(k) \tag{Definition of matrix multiplication} \\
-  &= [u(k), u(k-1), \cdots, u(k-r + 1)]^T \tag{$A$ shifts the input down to make space for latest signal from $B$} \\
+  Ax(k) + Bu(k) &= 
+  \begin{bmatrix}
+      0 & 0 & 0 & \cdots  \\
+      1 & 0 & 0 & \cdots \\
+      0 & 1 & 0 & \cdots \\
+      0 & 0 & 1 \\
+      \vdots & \vdots & \vdots & \ddots
+    \end{bmatrix}
+  \begin{bmatrix}
+    u(k-1) \\
+    \vdots \\
+     u(k-r)
+  \end{bmatrix} + 
+  \begin{bmatrix}
+      1 \\
+      0 \\
+      \vdots \\
+      0
+    \end{bmatrix}
+    u(k) \\
+  &=
+  \begin{bmatrix}
+    0 \\
+    u(k - 1) \\
+    \vdots \\
+    u(k - r + 1)
+  \end{bmatrix} + 
+  \begin{bmatrix}
+    u(k) \\
+    0 \\
+    \vdots \\
+  \end{bmatrix} \tag{Definition of matrix multiplication} \\
+  &= \begin{bmatrix}
+    u(k) \\
+    u(k - 1) \\
+    \vdots \\
+    u(k - r + 1)
+  \end{bmatrix} \tag{$A$ shifts the input down to make space for latest signal from $B$} \\
   &= x(k + 1)
 \end{align*}
 as desired. And also, we have:
 \begin{align*}
-  Cx(k) + Du(k) &= \sum_{i} C_{1i} u(k-i) + a_0u(k) \tag{Definition of matrix multiplication} \\
-  &= \sum_{i=0} a_i u(k - i) \\
+  Cx(k) + Du(k) &=
+  \begin{bmatrix}
+    a_1 & \cdots & a_r
+  \end{bmatrix}
+  \begin{bmatrix}
+    u(k-1) \\
+    \vdots \\
+    u(k-r)
+  \end{bmatrix} + 
+  \begin{bmatrix}
+    a_0
+  \end{bmatrix}
+  u(k) \\
+  & a_0 u(k) + a_1u(k-1) + \cdots a_r u(k-r) \tag{Matrix multiplication} \\
   &= y(k)
 \end{align*}
 which is exactly the dynamics needed for the MA model.
 
 \textbf{The AR Model}
-We use the state specified in the problem statement where $x(k) \in \mathbb{R}^p$ is a vector consists of $[y(k-1),\cdots, y(k-r)]^T$. We now define our matrices $A \in \mathbb{R}^{p \times p}, B \in \mathbb{R}^{p \times 1}, C \in \mathbb{R}^{1 \times p}$ and $D \in \mathbb{R}^{1 \times 1}$ as follows:
+We use the state specified in the problem statement where $x(k) = 
+  \begin{bmatrix}
+    y(k-1) \\
+    \vdots \\
+    y(k-p)
+  \end{bmatrix} \in \mathbb{R}^p$. We now define our matrices $A \in \mathbb{R}^{p \times p}, B \in \mathbb{R}^{p \times 1}, C \in \mathbb{R}^{1 \times p}$ and $D \in \mathbb{R}^{1 \times 1}$ as follows:
 \begin{align*}
-  D_{11} &= 1 \\
-  C_{1i} &= b_i, i = 1, \cdots, p \\
-  B_{1i} &=
-    \begin{cases}
-      1 & i = 1 \\
-      0 & \text{otherwise}
-    \end{cases} \\
-  A_{ij} &= 
-    \begin{cases}
-      b_j & i = 1 \\
-      1 & i = j + 1 \\
-      0 & \text{otherwise}
-    \end{cases} 
+  D &= 
+    \begin{bmatrix}
+      1
+    \end{bmatrix} \\
+  C &=
+    \begin{bmatrix}
+      b_1 & \cdots & b_p
+    \end{bmatrix}\\
+  B &=
+    \begin{bmatrix}
+      1 \\
+      0 \\
+      \vdots
+    \end{bmatrix} \\
+  A &= 
+    \begin{bmatrix}
+      b_1 & b_2 & b_3 & \cdots  \\
+      1 & 0 & 0 & \cdots \\
+      0 & 1 & 0 & \cdots \\
+      0 & 0 & 1 \\
+      \vdots & \vdots & \vdots & \ddots
+    \end{bmatrix}
+  \tag{Same as $A$ for AR model except first row is filled as shown}  
 \end{align*}
 With the above, we have:
 \begin{align*}
-  Ax(k) + Bu(k) &= A[y(k-1), \cdots, y(k-p)]^T + Bu(k) \\
-  &= A_1y(k-1) + \cdots + A_p y(k - p) + B_{11}u(k) \tag{Definition of matrix multiplication} \\
-  &= [u(k) + b_1y(k-1) + \cdots + b_py(k-p), y(k-1), \cdots, y(k-p + 1)]^T \\
-  &= [y(k), y(k-1), \cdots, y(k - p + 1)]^T
+  Ax(k) + Bu(k) &=
+    \begin{bmatrix}
+      b_1 & b_2 & b_3 & \cdots  \\
+      1 & 0 & 0 & \cdots \\
+      0 & 1 & 0 & \cdots \\
+      0 & 0 & 1 \\
+      \vdots & \vdots & \vdots & \ddots
+    \end{bmatrix}
+    \begin{bmatrix}
+      y(k-1) \\
+      \vdots \\
+      y(k-p)
+    \end{bmatrix} + 
+    \begin{bmatrix}
+      1 \\
+      0 \\
+      \vdots
+    \end{bmatrix} u(k) \\
+  &= 
+    \begin{bmatrix}
+      b_1y(k-1) + \cdots + b_py(k-p) \\
+      y(k-1) \\
+      \vdots \\
+      y(k-p + 1)
+    \end{bmatrix} + 
+    \begin{bmatrix} 
+      u(k) \\
+      0 \\
+      \vdots
+    \end{bmatrix} \\
+  &=  \begin{bmatrix}
+      u(k) + b_1y(k-1) + \cdots + b_py(k-p) \\
+      y(k-1) \\
+      \vdots \\
+      y(k-p + 1)
+    \end{bmatrix} \\
+  &= \begin{bmatrix}
+      y(k) \\
+      y(k-1) \\
+      \vdots \\
+      y(k-p + 1)
+    \end{bmatrix} \\
+  &= x(k+1)
 \end{align*}
 The second to last line requires a bit of explanation. $A$ shifts the input down to make space for the new output. Unlike the last model where we just needed to carry the input through, in this case we need to use the input passed by $B$ ($u(k)$) to compute the current output $y(k)$. This is done by the first row of $A$ which does a weighed sum over all previous $y(k - p)$ values stored in our current state which is added to the input from $B$. It is immediate then that the new state is $x(k+1)$ as desired. 
 
 And also, we have:
 \begin{align*}
-  Cx(k) + Du(k) &= \sum_{i=1} C_{1i} y(k-i) + u(k) \tag{Definition of matrix multiplication} \\
+  Cx(k) + Du(k) &=
+    \begin{bmatrix}
+      b_1 & \cdots & b_p
+    \end{bmatrix}
+    \begin{bmatrix}
+      y(k-1) \\
+      \vdots \\
+      y(k-p)
+    \end{bmatrix} +
+    \begin{bmatrix}
+      1
+    \end{bmatrix}
+    u(k) \\
   &= u(k) + \sum_{i=1} b_i y(k - i) \\
   &= y(k)
 \end{align*}
 which is exactly the dynamics needed for the AR model.
 
 \textbf{The ARMA Model}
-We're going to do the simplest thing we can think of. We will use the state $x(k) \in \mathbb{R}^{p + r}$ which is a vector consisting of the previous $p$ outputs and the previous $r$ inputs. That is to say, we have the state:
-$$
-x(k) = [y(k-1), \cdots y(k-p), u(k-1), \cdots, u(k-r)]^T
-$$
+We're going to do the simplest thing we can think of. We will use the state $x(k) = 
+  \begin{bmatrix}
+    y(k-1) \\
+    \vdots \\
+    y(k-p) \\
+    u(k-1) \\
+    \vdots \\
+    u(k-r)
+  \end{bmatrix} \in \mathbb{R}^{p + r}$.
+
 This makes defining our new linear system relatively straight-forward, since we can just combine our previous two systems. We will have four matrices, $A \in \mathbb{R}^{(p+r) \times (p + r)}, B \in \mathbb{R}^{(p+r) \times 1}, C \in \mathbb{R}^{1 \times (p + r)}, D \in \mathbb{R}^{1 \times 1}$. These are defined as follows:
 \begin{align*}
-  D_{11} &= a_0 \\
-  C_{1k} &= 
-    \begin{cases}
-      b_k & 1 \leq k \leq p \\
-      a_{k-p} & p + 1 \leq k \leq p+r
-    \end{cases} \\
-  B_{1k} &=
-    \begin{cases}
-      a_0 & k = 1 \\
-      1 & k = (p + 1) \\
-      0 & \text{otherwise}
-    \end{cases} \\
-  A_{ij} &= 
-    \begin{cases}
-      b_j & i = 1, 1 \leq j \leq p \\
-      a_{j-p} & i = 1, p + 1 \leq j \leq p + r \\
-      1 & i = j + 1, j \neq p \\
-      0 & \text{otherwise}
-    \end{cases} 
+  D &=
+    \begin{bmatrix}
+      a_0
+    \end{bmatrix} \\
+  C &= 
+    \begin{bmatrix}
+      b_1 & \cdots & b_p & a_1 & \cdots & a_r
+    \end{bmatrix} \\
+  B &=
+    \begin{bmatrix}
+      a_0 \\
+      0 \\
+      \vdots \\
+      1 \\
+      0 \\
+      \vdots
+    \end{bmatrix} \tag{The one is at index $p + 1$} \\
+    A &= 
+    \begin{bmatrix}
+      b_1 & b_2 & b_3 & \cdots & b_{p-1} & b_p & a_1 & a_2 & a_3 & \cdots & a_r \\
+      1 & 0 & 0 & \cdots & 0 & 0 & 0 & 0 & 0 & \cdots & 0 \\
+      0 & 1 & 0 & \cdots & 0 & 0 & 0 & 0 & 0 & \cdots & 0 \\
+      0 & 0 & 1 & \cdots & 0 & 0 & 0 & 0 & 0 & \cdots & 0 \\
+      \vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+      0 & 0 & 0 & \cdots & 1 & 0 & 0 & 0 & 0 & \cdots & 0 \\
+      0 & 0 & 0 & \cdots & 0 & 0 & 0 & 0 & 0 & \cdots & 0 \\
+      0 & 0 & 0 & \cdots & 0 & 0 & 1 & 0 & 0 & \cdots & 0 \\
+      0 & 0 & 0 & \cdots & 0 & 0 & 0 & 1 & 0 & \cdots & 0 \\
+      0 & 0 & 0 & \cdots & 0 & 0 & 0 & 0 & 1 & \cdots & 0 \\
+      \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+    \end{bmatrix} \tag{Note that in this case, $A_{ij} = 1$ only when $i = j + 1, j \neq p$}
 \end{align*}
 The above might be somewhat hard to parse, so we explain each matrix in more detail. $D$ is the same as in the MA model, since this model is idential to the MA model in that regard. $C$ is simply the concatenation of the corresponding $C$ matrices used in the AR and MA models, since the output of this model is nearly a sum of the output of both models ($D$ handles the edge-case).
 
@@ -271,23 +485,103 @@ The matrix $A$ is likely the most complicated to understand, but again, this is 
 
 As such, we have:
 \begin{align*}
-  Ax(k) + Bu(k) &= A[y(k-1), \cdots, y(k-p), u(k-1), \cdots, u(k-r)]^T + Bu(k) \\
-  &= A_1y(k-1) + \cdots + A_p y(k - p) \\
-    &+ A_{p+1} u(k - 1) + \cdots + A_{p+r} u(k-r) \\
-    &+ B_{11}u(k) + B_{(p+1)1}u(k) \tag{Definition of matrix multiplication} \\
-  &= [b_1y(k-1) + \cdots + b_py(k-p) + a_0u(k) + \cdots + a_r u(k-r), \\
-  &  y(k-1), \cdots, y(k-p + 1), u(k), \cdots, u(k - r + 1)]^T \\
-  &= [y(k), y(k-1), \cdots, y(k - p + 1), u(k), \cdots, u(k-r + 1)]^T
+  Ax(k) + Bu(k) &= 
+    \begin{bmatrix}
+      b_1 & b_2 & b_3 & \cdots & b_{p-1} & b_p & a_1 & a_2 & a_3 & \cdots & a_r \\
+      1 & 0 & 0 & \cdots & 0 & 0 & 0 & 0 & 0 & \cdots & 0 \\
+      0 & 1 & 0 & \cdots & 0 & 0 & 0 & 0 & 0 & \cdots & 0 \\
+      0 & 0 & 1 & \cdots & 0 & 0 & 0 & 0 & 0 & \cdots & 0 \\
+      \vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+      0 & 0 & 0 & \cdots & 1 & 0 & 0 & 0 & 0 & \cdots & 0 \\
+      0 & 0 & 0 & \cdots & 0 & 0 & 0 & 0 & 0 & \cdots & 0 \\
+      0 & 0 & 0 & \cdots & 0 & 0 & 1 & 0 & 0 & \cdots & 0 \\
+      0 & 0 & 0 & \cdots & 0 & 0 & 0 & 1 & 0 & \cdots & 0 \\
+      0 & 0 & 0 & \cdots & 0 & 0 & 0 & 0 & 1 & \cdots & 0 \\
+      \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+    \end{bmatrix}
+    \begin{bmatrix}
+      y(k-1) \\
+      \vdots \\
+      y(k-p) \\
+      u(k-1) \\
+      \vdots \\
+      u(k-r)
+    \end{bmatrix} + 
+    \begin{bmatrix}
+      a_0 \\
+      0 \\
+      \vdots \\
+      1 \\
+      0 \\
+      \vdots
+    \end{bmatrix} u(k) \\
+  &=
+    \begin{bmatrix}
+      b_1y(k-1) + \cdots + b_py(k-p) + a_1u(k-1) + \cdots + a_r u(k-r) \\
+      y(k-1) \\ 
+      \vdots \\
+      y(k-p + 1) \\
+      0 \\
+      u(k-1) \\
+      \vdots \\
+      u(k - r + 1)
+    \end{bmatrix}  + 
+    \begin{bmatrix}
+    a_0u(k) \\
+    0 \\
+    \vdots \\
+    0 \\
+    u(k) \\
+    0 \\
+    \vdots \\
+    0
+    \end{bmatrix} \\
+  &=
+    \begin{bmatrix}
+      b_1y(k-1) + \cdots + b_py(k-p) + a_0u(k) + a_1u(k-1) + \cdots + a_r u(k-r) \\
+      y(k-1) \\ 
+      \vdots \\
+      y(k-p + 1) \\
+      u(k) \\
+      u(k-1) \\
+      \vdots \\
+      u(k - r + 1)
+    \end{bmatrix}  \\
+    &=
+    \begin{bmatrix}
+      y(k) \\
+      y(k-1) \\ 
+      \vdots \\
+      y(k-p + 1) \\
+      u(k) \\
+      u(k-1) \\
+      \vdots \\
+      u(k - r + 1)
+    \end{bmatrix} \\
+    &= x(k+1)
 \end{align*}
 
 Finally, we have:
 \begin{align*}
-  Cx(k) + Du(k) &= \sum_{i=1}^{p} C_{1i} y(k-i) + \sum_{i = 1}^{r} C_{1(p + i)}u(k - i) + D_{11}u(k) \tag{Definition of matrix multiplication} \\
+  Cx(k) + Du(k) &=
+  \begin{bmatrix}
+    b_1 & \cdots & b_p & a_1 & \cdots & a_r
+  \end{bmatrix}
+  \begin{bmatrix}
+    y(k-1) \\
+    \vdots \\
+    y(k-p) \\
+    u(k-1) \\
+    \vdots \\
+    u(k-r)
+  \end{bmatrix} + 
+  \begin{bmatrix}
+    a_0
+  \end{bmatrix}u(k) \\
   &= \sum_{i=1}^{p} b_i y(k-i) + \sum_{i = 1}^{r} a_{i}u(k - i) + a_0 u(k) \\
   &= y(k)
 \end{align*}
 Therefore, this linear system is appropriate for the ARMA model.
-
 \end{solution}
 
 \newpage
@@ -423,7 +717,7 @@ This is a contradiction on the fact that $f(x) = \tilde{A}x$ for all $x \in \mat
     Similarly to above, we assume the angle being measured is the smallest possible angle between the two vectors. Then we have $P^TQ = R$ where $R_{ii} \geq 0$.
 
   \item
-    $A^T A = X$ where $X_{ii} = 0$ for $i = 1, \cdots k$.
+    $A^T A = X$ where $X_{ij} = 0$ for $i = 1, \cdots k$ and $j > k$ or $j = 1, \cdots k$ and $i > k$.
 
 \end{enumerate}
 \end{solution}
