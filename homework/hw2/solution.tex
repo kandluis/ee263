@@ -110,8 +110,15 @@
   \end{align*}
   As such, we can immediately set $c = (2b - 2a)$ and $d = b^Tb - a^T a$, thereby showing the set of points is a halfspace.
 
-  TODO: Drawing of $a,b,c$ and the halfspace.
+  We give an example in Figure \ref{fig:halfspace_drawing} for $\mathbb{R}^2$.
 \end{solution}
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.6]{figures/halfspace.jpg}
+  \caption{Drawing of the half-space defined by $a$ and $b$. Also includes the vector $c$ computed explicitly.}
+  \label{fig:halfspace_drawing}
+\end{figure}
 
 \newpage
 \Q{Linearizing range measurements}
@@ -138,8 +145,7 @@
         &= \frac{x_0 - a}{||x_0 - a||} \delta x \tag{Shown above} \\
         &= k^T\delta x \tag{Where $k$ is a unit vector pointing from $a$ to $x_0$}
       \end{align*}
-      TODO: Picture
-
+      For $\mathbb{R}^2$, we can visualize the above as shown in Figure \ref{fig:visualizations_single_beacon_r2}.
     \item We proceed now to show the following:
     \[
       0 \leq \eta \leq \frac{\alpha^2}{2}
@@ -195,32 +201,49 @@
     With the above, we now conclude knowing that on the interval $-\alpha \leq \beta < \alpha$, we have $0 \leq g(\beta) \leq \frac{\alpha^2}{2}$. This proves the bound on our error.
   \end{enumerate}
 \end{solution}
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[scale=0.6]{figures/single_beacon.jpg}
+  \caption{A small change $\delta x$ leads to $\delta y$ which is approximated by the projection of $\delta x$ onto the unit vector from from $a$ to $x_0$.}
+  \label{fig:visualizations_single_beacon_r2}
+\end{figure}
 
 \newpage
 \Q{Orthogonal complement of a subspace}
 \begin{solution}
   \begin{enumerate}[label=(\alph*)]
-    \item We verify that $\mathcal{V}^T$ is a subspace of $\mathbb{R}^n$. We do this by showing that it is closed under addition and scalar multiplication.
+    \item We verify that $\mathcal{V}^{\perp}$ is a subspace of $\mathbb{R}^n$. We do this by showing that it is closed under addition and scalar multiplication.
 
-    Consider $x, z \in \mathcal{V}^T, a,b \in \mathbb{R}$. We show that $ax + bz \in \mathcal{V}^T$. To do this, we need to show that $\langle ax + bz, y \rangle = 0, \forall y \in \mathcal{V}$.
+    Consider $x, z \in \mathcal{V}^{\perp}, a,b \in \mathbb{R}$. We show that $ax + bz \in \mathcal{V}^{\perp}$. To do this, we need to show that $\langle ax + bz, y \rangle = 0, \forall y \in \mathcal{V}$.
     \begin{align*}
       \langle ax + bz, y \rangle &= a\langle x, y\rangle + b\langle x, z \rangle \tag{Linearity of dot product} \\
-      &= 0 + 0 \tag{$x,y \in \mathcal{V}^T$} 
+      &= 0 + 0 \tag{$x,y \in \mathcal{V}^{\perp}$} 
     \end{align*}
     This concludes our proof.
 
-    \item $\mathcal{V} = \textbf{range}(V)$, since by definition the range of $V$ is the span of its columns. On the other handl, $\mathcal{V}^T$ is $\textbf{null}(V)$ since the nullspace is the set of vectors which are orthogonal to all vectors in the image of $V$.
+    \item $\mathcal{V} = \textbf{range}(V)$, since by definition the range of $V$ is the span of its columns. On the other hand, $\mathcal{V}^{\perp}$ is $\textbf{null}(V)$ since the nullspace is the set of vectors which are orthogonal to all vectors in the image of $V$.
 
-    \item Take $x \in \mathbb{R}^n$. As the hint indicates, TODO.
+    \item Take $x \in \mathbb{R}^n$ and wish to prove that $x = v + v^{\perp}$ where $v \in \mathcal{V}$ and $v^{\perp} \in \mathcal{V}^{\perp}$. As the hint indicates, let's take $P = V(V^T V)^{-1}V$ be the projection matrix onto the space $\mathcal{V}$ as discussed in class. Then let $v = Px$ and take $v^{\perp} = x - Px = (I - P)x$ (it is clear that $x = v + v^{\perp}$). Since $P$ is the projection operator onto $\mathcal{V}$, we immediately have that $v \in \mathcal{V}$. We now show that $v^{\perp} \in \mathcal{V}^{\perp}$. Consider what happens when we apply the projection operation $P$ to $v^{\perp}$:
+    \begin{align*}
+      Pv^{\perp} &= P(I - P)x \\
+      &= (P - P^2)x \\
+      &= (P - P)x \tag{$P^2 = P$ since a projection applied twice is the same as applied once} \\
+      &= 0
+    \end{align*}
+    From the above, it is clear that $v^{\perp} \in \textbf{image}(P)^{\perp} = \mathcal{V}^{\perp}$, as discussed in (b).
+
+    The next step is to show that this decomposition is unique.
+
+    Let there be some other decomposition $x = u + w$ where $u \in \mathcal{V}, w \in \mathcal{V}^{\perp}$. We now show that $u = v$ and $w = v^{\perp}$, meaning our decomposition is unque. We have that $v = Px = P(u + w) = Pu + 0 = u$, so $u = v$. Using this, we also have that $w = x - u = x - v = v^{\perp}$. Therefore the decomposition is unique.
     \item This follows almost immediately from (b). 
     \begin{align*}
-        \text{dim } \mathcal{V}^T + \text{dim } \mathcal{V} &= \text{dim } \textbf{range}(V) + \text{dim } \textbf{null}(V) \\
+        \text{dim } \mathcal{V}^{\perp} + \text{dim } \mathcal{V} &= \text{dim } \textbf{range}(V) + \text{dim } \textbf{null}(V) \\
         &= \text{dim } \mathbb{R}^n \tag{By Rank-nullity theorem} \\
         &= n
       \end{align*}
-    \item We wish to show that given $\mathcal{V} \subseteq \mathcal{U} \implies \mathcal{U}^T \subseteq \mathcal{V}^T$.
+    \item We wish to show that given $\mathcal{V} \subseteq \mathcal{U} \implies \mathcal{U}^T \subseteq \mathcal{V}^{\perp}$.
 
-    Take any $x \in \mathcal{U}^T$. By definition of orthogonal complement, we must have that $\langle x, y \rangle = 0, \forall y \in \mathcal{U}$. However, since $\mathcal{V} \subseteq \mathcal{U}$, this implies that $\langle x, z \rangle = 0, \forall z \in \mathcal{V}$. This further implies that $x \in \mathcal{V}^T$, concluding the proof.
+    Take any $x \in \mathcal{U}^T$. By definition of orthogonal complement, we must have that $\langle x, y \rangle = 0, \forall y \in \mathcal{U}$. However, since $\mathcal{V} \subseteq \mathcal{U}$, this implies that $\langle x, z \rangle = 0, \forall z \in \mathcal{V}$. This further implies that $x \in \mathcal{V}^{\perp}$, concluding the proof.
   \end{enumerate}
 \end{solution}
 
@@ -261,79 +284,90 @@ Following the process described above, we determined that for the given $A$ and 
       \frac{\partial J^{\text{smooth}}}{\partial y_i} &= 
       \begin{cases}
           2(y_{i+2} - 2y_{i+1} + y_{i}) & i = 1 \\
-          -4(y_{i+1} - 2y_{i} + y_{i-1}) &  i = 2, n = 3\\
+          -4(y_{i+1} - 2y_{i} + y_{i-1}) & i = 2, n = 3\\
           2(y_{i+2} - 2y_{i+1} + y_{i}) - 4(y_{i+1} - 2y_{i} + y_{i-1}) & i = 2, n > 3 \\
           2(y_{i} - 2y_{i-1} + y_{i-2}) - 4(y_{i+1} - 2y_{i} + y_{i-1}) & i = n - 1, n > 3 \\
           2(y_{i} - 2y_{i-1} + y_{i-2}) & i = n \\
           2(y_{i+2} - 2y_{i+1} + y_{i}) - 4(y_{i+1} - 2y_{i} + y_{i-1}) + 2(y_i - 2y_{i-1} + y_{i-2}) & \text{otherwise}
       \end{cases}
     \end{align*}
-    Plugging into the equation given and setting equal to $0$, we have that:
+    Plugging into the equation given and setting equal to $0$ (and simplifying), we have that:
     \begin{align*}
-      2y_i +  \lambda (2y_i) - \mu(2y_{i+1} - 2y_i) + \kappa(2y_{i+2} - 4y_{i+1} + 2y_i) = 2u_i \tag{$i = 1$} \\
-      2y_i + \lambda (2y_i) + \mu(4y_i - 2y_{i+1} - 2y_{i-1}) + \kappa(-4y_{i+1} + 8y_{i} -4y_{i-1}) = 2u_i \tag{$i=2, n = 3$} \\
-      2y_i + \lambda (2y_i) + \mu(4y_i - 2y_{i+1} - 2y_{i-1}) + \kappa(2y_{i+2} - 8y_{i+1} + 10y_{i} -4y_{i-1} ) = 2u_i \tag{$i = 2, n > 3$} \\
-      2y_i + \lambda (2y_i) + \mu(4y_i - 2y_{i+1} - 2y_{i-1}) + \kappa(-4y_{i+1} + 10y_i -8y_{i-1} + 2y_{i-2}) = 2u_i \tag{$i = n - 1, n > 3$} \\
-      2y_i + \lambda (2y_i) - \mu(2y_i - 2y_{i-1}) + \kappa(2y_i - 4y_{i-1} + 2y_{i-2}) = 2u_i \tag{$i = n$} \\
-      2y_i + \lambda (2y_i) + \mu(4y_i - 2y_{i+1} - 2y_{i-1}) + \kappa (2y_{i+2} - 8y_{i+1} - 4y_i - 8y_{i-1} + 2y_{i-2}) &= 2u_i \tag{otherwise}
-    \end{align*}
-    which simplifies to:
-     \begin{align*}
-      2y_i +  \lambda (2y_i) - \mu(2y_{i+1} - 2y_i) + \kappa(2y_{i+2} - 4y_{i+1} + 2y_i) = 2u_i \tag{$i = 1$} \\
-      2y_i + \lambda (2y_i) + \mu(4y_i - 2y_{i+1} - 2y_{i-1}) + \kappa(-4y_{i+1} + 8y_{i} -4y_{i-1}) = 2u_i \tag{$i=2, n = 3$} \\
-      2y_i + \lambda (2y_i) + \mu(4y_i - 2y_{i+1} - 2y_{i-1}) + \kappa(2y_{i+2} - 8y_{i+1} + 10y_{i} -4y_{i-1} ) = 2u_i \tag{$i = 2, n > 3$} \\
-      2y_i + \lambda (2y_i) + \mu(4y_i - 2y_{i+1} - 2y_{i-1}) + \kappa(-4y_{i+1} + 10y_i -8y_{i-1} + 2y_{i-2}) = 2u_i \tag{$i = n - 1, n > 3$} \\
-      2y_i + \lambda (2y_i) - \mu(2y_i - 2y_{i-1}) + \kappa(2y_i - 4y_{i-1} + 2y_{i-2}) = 2u_i \tag{$i = n$} \\
-      2y_i + \lambda (2y_i) + \mu(4y_i - 2y_{i+1} - 2y_{i-1}) + \kappa (2y_{i+2} - 8y_{i+1} - 4y_i - 8y_{i-1} + 2y_{i-2}) &= 2u_i \tag{otherwise}
+      \lambda y_i - \mu(y_{i+1} - y_i) + \kappa(y_{i+2} - 2y_{i+1} + y_i) = u_i - y_i \tag{$i = 1$} \\
+      \lambda y_i + \mu(2y_i - y_{i+1} - y_{i-1}) + \kappa(-2y_{i+1} + 4y_{i} -2y_{i-1}) = u_i - y_i \tag{$i=2, n = 3$} \\
+      \lambda y_i + \mu(2y_i - y_{i+1} - y_{i-1}) + \kappa(y_{i+2} - 4y_{i+1} + 5y_{i} -2y_{i-1} ) = u_i - y_i \tag{$i = 2, n > 3$} \\
+      \lambda y_i + \mu(2y_i - y_{i+1} - y_{i-1}) + \kappa(-2y_{i+1} + 5y_i -4y_{i-1} + y_{i-2}) = u_i - y_i \tag{$i = n - 1, n > 3$} \\
+      \lambda y_i - \mu(y_i - y_{i-1}) + \kappa(y_i - 2y_{i-1} + y_{i-2}) = u_i - y_i \tag{$i = n$} \\
+      \lambda y_i + \mu(2y_i - y_{i+1} - y_{i-1}) + \kappa (y_{i+2} - 4y_{i+1} - 6y_i - 4y_{i-1} + y_{i-2}) &= u_i - y_i \tag{otherwise}
     \end{align*}
     which we can write in matrix form as:
     \[
       A\begin{bmatrix}
-        1 \\ \lambda \\ \mu \\ \kappa
-      \end{bmatrix} = 
-      2\begin{bmatrix}
-        u_1 \\
-        u_2 \\
-        \vdots \\
-        u_1 \\
-        \vdots \\
-        u_{n-1} \\
-        u_{n}
-      \end{bmatrix}
+        \lambda \\ \mu \\ \kappa
+      \end{bmatrix} = u - y
     \]
     where 
     \begin{align*}
       A &= \begin{bmatrix}
-        2y_1 & 2y_1 & -(2y_{2} - 2y_1) & (2y_{3} - 4y_{2} + 2y_1) \\
-        2y_2 & 2y_2 & 4y_2 - 2y_{3} - 2y_{1} & 2y_{4} - 8y_{3} + 10y_{2} -4y_{1} \\
-        & & \vdots & \\
-        2y_i & 2y_i & 4y_i - 2y_{i+1} - 2y_{i-1} & 2y_{i+2} - 8y_{i+1} - 4y_i - 8y_{i-1} + 2y_{i-2} \\
-        & & \vdots & \\
-        2y_{n-1} & 2y_{n-1} & 4y_{n-1} - 2y_{n} - 2y_{n-2} & -4y_{n} + 10y_{n-1} -8y_{n-2} + 2y_{n-3} \\
-        2y_n & 2y_n & -(2y_n - 2y_{n-1}) & 2y_n - 4y_{n-1} + 2y_{n-2})
+        y_1 & -(y_{2} - y_1) & (y_{3} - 2y_{2} + y_1) \\
+        y_2 & 2y_2 - y_{3} - y_{1} & y_{4} - 4y_{3} + 5y_{2} -2y_{1} \\
+        & \vdots & \\
+        y_i & 2y_i - y_{i+1} - y_{i-1} & y_{i+2} - 4y_{i+1} - 6y_i - 4y_{i-1} + y_{i-2} \\
+        & \vdots & \\
+        y_{n-1} & 2y_{n-1} - y_{n} - y_{n-2} & -2y_{n} + 5y_{n-1} -4y_{n-2} + y_{n-3} \\
+        y_n & -(y_n - y_{n-1}) & y_n - 2y_{n-1} + y_{n-2}
       \end{bmatrix}  \tag{$n > 3$} \\
       A &= 
       \begin{bmatrix}
-        2y_1 & 2y_1 & -(2y_{2} - 2y_1) & (2y_{3} - 4y_{2} + 2y_1) \\
-        2y_2 & 2y_2 & 4y_2 - 2y_{3} - 2y_{1} & -4y_3 + 8y_2 - 4y_1) \\
-        2y_3 & 2y_3 & -(2y_3 - 2y_{2}) & 2y_3 - 4y_{2} + 2y_1)
+        y_1 & -(y_{2} - y_1) & y_{3} - 2y_{2} + y_1 \\
+        y_2 & 2y_2 - y_{3} - y_{1} & -2y_3 + 4y_2 - 2y_1) \\
+        y_3 & -(y_3 - y_{2}) & y_3 - 2y_{2} + y_1)
       \end{bmatrix} \tag{$n = 3$}
     \end{align*}
-    To solve this over-constrained system of equations (if a solution exists), we just need to compute:
+    Since we know that a solution exists and that $n \geq 3$, we can always solve the above system of equations by forming a smaller $B \in \mathbb{R}^{3 \times 3}$ formed from any $3$ rows of $A$. For example, we can form the matrix:
+    \[
+      B =
+        \begin{bmatrix}
+          y_2 & 2y_2 - y_{3} - y_{1} & y_{4} - 4y_{3} + 5y_{2} -2y_{1} \\
+          y_3 & 2y_3 - y_{4} - y_{2} & y_{5} - 4y_{4} + 5y_{3} -2y_{2} \\
+          y_4 & 2y_4 - y_{5} - y_{3} & y_{6} - 4y_{5} + 5y_{4} -2y_{3} \\
+        \end{bmatrix}
+    \]
+    We can check that \textbf{rank}$(B) = 3$\footnote{See code for details}, so $B$ is invertible. If not, we can pick another set of $3$ rows.
+    We can then simply solve the following:
     \[
       \begin{bmatrix}
-        1 \\ \lambda \\ \mu \\ \kappa 
-      \end{bmatrix} = 2(A^TA)^{-1}A^T \begin{bmatrix}
-        u_1 \\
-        u_2 \\
-        \vdots \\
-        u_1 \\
-        \vdots \\
-        u_{n-1} \\
-        u_{n}
+        \lambda \\
+        \mu \\
+        \kappa 
+      \end{bmatrix} = B^{-1}
+      \begin{bmatrix}
+        u_3 - y_3 \\
+        u_4 - y_4 \\
+        u_5 - y_5
       \end{bmatrix}
     \]
-    We compute this resul using the provided $y$ and $u$.
+    which will give us the values of our constants.
+
+    \item
+      We now carry out the process described above using the provided $y$ and $u$ vectors. See the attached code for details. We end up with:
+      \[
+        B^{-1}\begin{bmatrix}
+        u_3 - y_3 \\
+        u_4 - y_4 \\
+        u_5 - y_5
+      \end{bmatrix} = 
+      \begin{bmatrix}
+        120.09994427 \\
+        2.00001039 \\
+        9.99999534
+      \end{bmatrix} \approx
+      \begin{bmatrix}
+        120.1 \\
+        2 \\
+        10
+      \end{bmatrix} 
+      \]
   \end{enumerate}
 \end{solution}
 
@@ -341,7 +375,7 @@ Following the process described above, we determined that for the given $A$ and 
 \Q{Estimating link delays from route latencies}
 
 \begin{solution}
-  TODO
+  Optional. Skip.
 \end{solution}
 
 \newpage
@@ -469,7 +503,6 @@ Following the process described above, we determined that for the given $A$ and 
 \end{questions}
 
 
-\begin{comment}
 \includepdf[
     %% Include all pages of the PDF
     pages=-,
@@ -478,8 +511,7 @@ Following the process described above, we determined that for the given $A$ and 
     %% sets the pagecommand to \pagestyle{empty}
     pagecommand={\pagestyle{headings}}]
 %% The pdf file itself
-{code.pdf}
-\end{comment}
+{HW2.pdf}
 
 
 
