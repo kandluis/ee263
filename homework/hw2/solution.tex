@@ -76,7 +76,7 @@
   \begin{enumerate}[label=(\alph*)]
     \item A reasonable assumption about the diagonal elements $E_{ii}$ of the elasticity matrix is that $E_{ii} < 0$. Generally speaking, if the price of item $i$ increases, the demand for item $i$ will tend to decrease (or vice-versa, where a decrease in price $i$ will lead to an increase in demand for item $i$).
 
-    However, we note that while reasonable, this assumption does not need to hold true. For example, luxury goods can often exhibit the inverse relation, where an increase in price and lead to increase demand (or, more often, a decrease in price will lead to a decrease in demand).
+    However, we note that while reasonable, this assumption does not need to hold true. For example, luxury goods can often exhibit the inverse relation, where an increase in price can lead to increase demand (or, more often, a decrease in price will lead to a decrease in demand).
 
     \item Let us first consider the case where $i$ and $j$ are \textbf{substitutes}.
 
@@ -333,7 +333,7 @@ Following the process described above, we determined that for the given $A$ and 
           y_4 & 2y_4 - y_{5} - y_{3} & y_{6} - 4y_{5} + 5y_{4} -2y_{3} \\
         \end{bmatrix}
     \]
-    We can check that \textbf{rank}$(B) = 3$\footnote{See code for details}, so $B$ is invertible. If not, we can pick another set of $3$ rows.
+    We can check that \textbf{rank}$(B) = 3$ (See code for details), so $B$ is invertible. If not, we can pick another set of $3$ rows.
     We can then simply solve the following:
     \[
       \begin{bmatrix}
@@ -397,7 +397,7 @@ Following the process described above, we determined that for the given $A$ and 
     &= \sqrt{\sum_{i=1}^n \sum_{j=1}^n A_{ij}^2 } \tag{Definition of matrix multiplication}
   \end{align*}
   That is to say, $||A||$ is simply the square root of the sum of squares of the entries of $A$.
-  \item We show that $\langle A, B \rangle = \text{vec}(A)^T \vec{B}$. 
+  \item We show that $\langle A, B \rangle = \text{vec}(A)^T \text{vec}{B}$. 
   \begin{align*}
     \langle A, B \rangle &= \text{trace}(AB^T) \tag{Given in part (b)} \\
     &= \sum_{i=1}^n (AB^T)_{ii} \tag{Definition of trace} \\
@@ -474,7 +474,7 @@ Following the process described above, we determined that for the given $A$ and 
         \end{bmatrix}
       \]
 
-      \item Bobbie cannot fill in the table so that Reza has no possible way of solving it. This is becase, as shown in part (a) and as computed programatically, we have that $\textbf{rank}\left( \begin{bmatrix} v_1 & \cdots & v_{36} \end{bmatrix} \right) = 36$, meaning that $\textbf{span}(\{v_k\}) = \mathbb{R}^{36}$, and as such, no matter what the initial vector $y \in \mathbb{R}^36$ is that Bobbie constructs, Reza can always compute:
+      \item Bobbie cannot fill in the table so that Reza has no possible way of solving it. This is becase, as shown in part (a) and as computed programatically, we have that $\textbf{rank}\left( \begin{bmatrix} v_1 & \cdots & v_{36} \end{bmatrix} \right) = 36$, meaning that $\textbf{span}(\{v_k\}) = \mathbb{R}^{36}$, and as such, no matter what the initial vector $y \in \mathbb{R}^{36}$ is that Bobbie constructs, Reza can always compute:
       $$
         x = A^{-1}y \in \mathbb{R}^{36}
       $$
@@ -482,7 +482,7 @@ Following the process described above, we determined that for the given $A$ and 
 
       \item Interestingly enough, for a $9 \times 9$ board, we have that $\text{dim }\textbf{span}(\{v_k\}) = 79$, meaning that the actions which Reza can take (the basis vectors) do not span the entire space (which is $\mathbb{R}^{81}$). 
 
-      Using Python and Numpy \footnote{See attached code}, we can compute this nullspace. As such, we know that the following board cannot be solved by Reza, since this board lies in the null-space.
+      Using Python and Numpy (See attached code), we can compute this nullspace. As such, we know that the following board cannot be solved by Reza, since this board lies in the null-space.
       \[
         \begin{bmatrix}
            0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\

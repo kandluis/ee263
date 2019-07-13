@@ -1,0 +1,103 @@
+\documentclass[12pt]{exam}
+
+\usepackage[utf8]{inputenc}  % For UTF8 source encoding.
+\usepackage{amsmath}  % For displaying math equations.
+\usepackage{amsfonts} % For mathematical fonts (like \mathbb{E}!).
+\usepackage{upgreek}  % For upright Greek letters, such as \upvarphi.
+\usepackage{wasysym}  % For additional glyphs (like \smiley!).
+\usepackage{mathrsfs} % For script text (hash families and universes).
+\usepackage{enumitem}
+\usepackage{graphicx}
+% For document margins.
+\usepackage[left=.8in, right=.8in, top=1in, bottom=1in]{geometry}
+\usepackage{lastpage} % For a reference to the number of pages.
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{pdfpages}
+\usepackage{verbatim}
+
+% TODO: Enter your name here :)
+\newcommand*{\authorname}{Luis A. Perez}
+
+\newcommand*{\duedate}{Wednesday, July 3rd}
+\newcommand*{\duetime}{11:59 pm}
+
+% Fancy headers and footers
+\headrule
+\firstpageheader{EE 263\\Summer 2019}{Homework 1 \\ }{Due: \duedate\\at \duetime}
+\runningheader{EE 263}{Homework 1}{\authorname}
+\footer{}{\footnotesize{Page \thepage\ of \pageref{LastPage}}}{}
+
+% Exam questions.
+\newcommand{\Q}[1]{\question{\large{\textbf{#1}}}}
+\qformat{}  % Remove formatting from exam questions.
+
+% Useful macro commands.
+\newcommand*{\bigtheta}[1]{\Theta\left( #1 \right)}
+\newcommand*{\bigo}[1]{O \left( #1 \right)}
+\newcommand*{\bigomega}[1]{\Omega \left( #1 \right)}
+\newcommand*{\prob}[1]{\text{Pr} \left[ #1 \right]}
+\newcommand*{\ex}[1]{\text{E} \left[ #1 \right]}
+\newcommand*{\var}[1]{\text{Var} \left[ #1 \right]}
+
+\newcommand*{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand*{\HH}{\mathscr{H}}   % Family of hash functions.
+\newcommand*{\UU}{\mathscr{U}}   % Universe.
+\newcommand*{\eps}{\varepsilon}  % Epsilon.
+
+
+% Custom formatting for problem parts.
+\renewcommand{\thepartno}{\roman{partno}}
+\renewcommand{\partlabel}{\thepartno.}
+
+% Framed answers.
+\newcommand{\answerbox}[1]{
+\begin{framed}
+\hspace{\fill}
+\vspace{#1}
+\end{framed}}
+
+\printanswers
+
+\setlength\answerlinelength{2in} \setlength\answerskip{0.3in}
+
+\begin{document}
+\title{EE 263 Homework 1}
+\author{\authorname}
+\date{}
+\maketitle
+\thispagestyle{headandfoot}
+\setcounter{MaxMatrixCols}{15}
+
+\begin{questions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Q{}
+
+  \begin{solution}
+    \begin{enumerate}[label=(\alph*)]
+      \item .
+    \end{enumerate}
+  \end{solution}
+\end{questions}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
