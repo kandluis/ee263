@@ -18,13 +18,13 @@
 % TODO: Enter your name here :)
 \newcommand*{\authorname}{Luis A. Perez}
 
-\newcommand*{\duedate}{Wednesday, July 3rd}
+\newcommand*{\duedate}{Wednesday, July 17th}
 \newcommand*{\duetime}{11:59 pm}
 
 % Fancy headers and footers
 \headrule
-\firstpageheader{EE 263\\Summer 2019}{Homework 1 \\ }{Due: \duedate\\at \duetime}
-\runningheader{EE 263}{Homework 1}{\authorname}
+\firstpageheader{EE 263\\Summer 2019}{Homework 3 \\ }{Due: \duedate\\at \duetime}
+\runningheader{EE 263}{Homework 3}{\authorname}
 \footer{}{\footnotesize{Page \thepage\ of \pageref{LastPage}}}{}
 
 % Exam questions.
@@ -61,7 +61,7 @@
 \setlength\answerlinelength{2in} \setlength\answerskip{0.3in}
 
 \begin{document}
-\title{EE 263 Homework 1}
+\title{EE 263 Homework 3}
 \author{\authorname}
 \date{}
 \maketitle
@@ -70,11 +70,65 @@
 
 \begin{questions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\Q{}
+\Q{Memory of a linear dynamical, time-invariant system}
 
   \begin{solution}
     \begin{enumerate}[label=(\alph*)]
-      \item .
+      \item Let us first consider how we might check if a valid impose response of fixed size $M$ exists. The first thing to note is that the covolution operator given in the problem statent can actually be written as a linear system:
+      \[
+        \bar{y} = Ah
+      \]
+      where $\bar{y} \in \mathbb{R}^{T - M}, h \in \mathbb{R}^{M}$ and $A \in \mathbb{R}^{(T-M) \times M}$. Note that we remove the first $\{y_1, \cdots, y_{M}\}$. In fact, we can use the matrix $A$ as defined below:
+      \begin{align*}
+        A &=
+          \begin{bmatrix}
+          u_M & u_{M-1} & u_{M-2} & \cdots & u_1 \\ 
+          u_{M+1} & u_{M} & u_{M-1} & \cdots & u_2 \\ 
+          u_{M+2} & u_{M + 1} & u_{M} & \cdots & u_2 \\ 
+          \vdots & \vdots & \vdots & \ddots \\
+          u_{T-2} & u_{T-3} & u_{T-4} & \cdots & u_{T-M-1} \\
+          u_{T-1} & u_{T-2} & u_{T-3} & \cdots & u_{T-M} \\
+          \end{bmatrix} \\
+        y_{-1} &= 
+          \begin{bmatrix}
+            y_{M+1} \\
+            \vdots \\
+            y_T
+          \end{bmatrix} \\
+        h &= 
+          \begin{bmatrix}
+            h_1 \\
+            \vdots \\
+            h_M
+          \end{bmatrix}
+      \end{align*}
+      We can see by inspection above that $Ah$ performs the needed convolutions betweens $u$ and $h$ to obtain $\bar{y}$, by the properties of matrix multiplication (eg, to obtain $y_i$, we compute the dot product of the $i-M$-th row of $A$ with $h$, which is exactly what our convolution dictates, and for $i \leq M$, the convolution is not fully defined so we ignore them).
+
+      In the problem statement, we're given the fact that $T > 2M$, so this means that there will always be at least $T-M > 2M -M = M$ rows in $A$, meaning it will always be a tall and skinny matrix. 
+
+      As such, we can use the pseudo inverse to find the closests solution for $h$, computing:
+      \[
+        \bar{h} = (A^TA)^{-1}A^T\bar{y}
+      \]
+      Finally, once we've computed this $h$, we can re-compute that $\bar{y}$ given our inputs forming $A$, and see if this equals our what we started with. In other words, we have that:
+      \[
+        ||A\bar{h} - \bar{y}|| \leq \epsilon \implies M \text{ is a valid value} \tag{$\epsilon$ is needed to deal with floating point imprecision}
+      \]
+      The above gives us a way to check if $M$ is sufficient. To finallize our method, we simply iterate over the possible values of $M$ from $M = 1, \cdots \frac{T}{2} - 1$ in order until we find a valid value.
+
+      \item Applying the process we described above, we find that $M = 7$ is the smallest value that works. We also have:
+      \[
+        h =
+          \begin{bmatrix}
+            0.63 \\
+            0.27 \\
+            0.02 \\
+            0.37 \\
+            0.96 \\
+            0.95 \\
+            0.46
+          \end{bmatrix}
+      \]
     \end{enumerate}
   \end{solution}
 \end{questions}
