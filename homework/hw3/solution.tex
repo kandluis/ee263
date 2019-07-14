@@ -201,12 +201,141 @@
   \end{solution}
 
 \newpage
-\Q{Sensor integrity monitor}
+\Q{Coin Collector Robot}
   \begin{solution}
     \begin{enumerate}[label=(\alph*)]
-      \item TODO
+      \item To find the coordinates of the robot at time $t$, we have to consider what the effect of the constant force is. Given that the robot is unit mass, we have $a_i = f_i$ (acceleration is equal to the force).
+
+      Let us now consider the effect of the force $f_i$ for one second (from $t = 2i -2$ to $t = 2i - 1$) on the final position:
+      \[
+        \Delta x_i^1 = \underbrace{\frac{1}{2}f_i}_{\text{Change caused by acceleration over 1 second}} + \underbrace{f_i(t - (2i - 1))}_{\text{Change caused by change in velocity}}
+      \]
+      As such, for all $f_i$ that are applied over the full two second period, we will have:
+      \[
+        \Delta x_i = \underbrace{2f_i}_{\text{Change caused by acceleration over 2 seconds}} + \underbrace{2f_i(t - 2i)}_{\text{Change caused by change in velocity}}
+      \]
+    The final position at time $t$, let's call it $x_t$, will then be given by $x_t = x_0 + \Delta x$ where $\Delta x$ (the total change) can be computed with the following:
+    \begin{align*}
+      \Delta x &= 
+        \begin{cases}
+          \sum_{i=1}^{\frac{t}{2} } \Delta x_i  & t \text{ is even} \\
+          \Delta x_{\frac{t+1}{2}}^1 + \sum_{i=1}^{\frac{t-1}{2} } \Delta x_i & t \text{ is odd}
+        \end{cases}
+    \end{align*}
+    Furthermore, we know that $x_0 = 0$. As such, the postion at time $t$ is given by $(x_t, y_t)$ where 
+    \begin{align*}
+      y_t &= t \\
+      x_t &=
+        \begin{cases}
+          \sum_{i=1}^{\frac{t}{2}} 2f_i + 2f_i(t - 2i) & t \text{ is even} \\
+          \frac{1}{2}f_{\frac{t+1}{2}} + \sum_{i=1}^{\frac{t-1}{2}} 2f_i + 2f_i(t - 2i) & t \text{ is odd}
+        \end{cases}
+    \end{align*}
+    We note that the above are all linear relations, so if we were so inclined, we could re-write the above as simply $x_t = c_t^T f$ for some vector $c_t \in \mathbb{R}^{n}$ and $f = \begin{bmatrix} f_1 \\ f_2 \\ \vdots\\ f_n \end{bmatrix}$. In fact, we have:
+    \begin{align*}
+      c_t &=
+        \begin{bmatrix}
+          2 + 2(t -2) \\
+          2 + 2(t - 4) \\
+          2 + 2(t - 6) \\
+          \vdots \\
+          2 + 2(6) \\
+          2 + 2(4) \\
+          2 + 2(2) \\
+          2 \\
+          0 \\
+          0 \\
+          \vdots
+        \end{bmatrix} \in \mathbb{R}^n \tag{$t$ is even} \\
+        c_t &=
+        \begin{bmatrix}
+          2 + 2(t -2) \\
+          2 + 2(t - 4) \\
+          2 + 2(t - 6) \\
+          \vdots \\
+          2 + 2(5) \\
+          2 + 2(3) \\
+          2 + 2(1) \\
+          \frac{1}{2} \\
+          0 \\
+          0 \\
+          \vdots
+        \end{bmatrix} \in \mathbb{R}^n \tag{$t$ is odd} 
+    \end{align*}
+      \item 
+        We are now given a sequence $(x_1, y_1), \cdots, (x_{2n}, y_{2n})$ of $2n$ coins, and we want to determine whether the robot can collect them. For simplicitly, we assume that $y_i = i$ (all we require is that $i \neq j \implies y_i \neq y_j$, since if this were not the case, it's immediate that the coins cannot be collected, but the problem can be presented more simply if we have $y_i = i$).
+
+        From our work in part (a), we know that the robot can collect the coins if the following all hold:
+        \begin{align*}
+          x_1 &= c_1^T f \\
+          x_2 & = c_2^T f \\
+          \vdots \\
+          x_{n-1} & c_{n-1}^T f \\
+          x_n &= c_n^T f
+        \end{align*}
+        which we can write as the linear system $x = Af$ where $x \in \mathbb{R}^{2n}, f \in \mathbb{R}^n$ and $A \in \mathbb{R}^{2n \times n}$ as per the below:
+        \[
+          \begin{bmatrix}
+            x_1 \\
+            x_2 \\
+            \vdots \\
+            x_{2n}
+          \end{bmatrix} =
+          \begin{bmatrix}
+            & \text{---} & c_1^T &\text{---}  & \\
+            &\text{---} & c_2^T &\text{---}  & \\
+            & & \vdots & & \\
+            &\text{---} & c_{2n}^T &\text{---}  &
+          \end{bmatrix}
+          \begin{bmatrix}
+            f_1 \\
+            f_2 \\
+            \vdots \\
+            f_n
+          \end{bmatrix}
+        \]
+        As such, we have an overdetermined system of equations. As such, we can compute the closests fit $\hat{f}$:
+        \[
+          \hat{f} = (A^TA)^{-1}A^Tx
+        \]
+        and check to see if this $\hat{f}$ satisfies our problem statement. In other words, to check feasibility, we need to check if:
+        \[
+          || A\hat{f} - x|| < \eps
+        \]
+        forms some sufficiently small $\eps$ (due to floating point imprecision).
+      
+      \item See attached code. We show that for the data from ``robot\_coin\_collector.m'', not all the coins can be collected under this framework.
+      
+      \item If we now that only one of the coins cannot be collected, we can simply, we can simply attempt the same process above but with $A_{-i}$ and $x_{-i}$ (eg, we remove the $i$-th row from $A$ and remove the $i$-th element from $x$. This then imposes no restrictions on the robot for time $i$ in the x-position, which relaxes our system.
+
+      If we check for all of $i = 1, \cdots, 2n$, we will be able to determine if the robot can collect all but one of the coins (and can even identify the coin).
+
+      \item See attached code where the process described above is implemented.
+
+      It turns out that the 7-th coin (1-indexed) is the coin which cannot be collected. More specifically, the bad coin is $(x_7, y_7) = (13.0, 7)$.
+
+      In order to collect the remaning $2n - 1$ coins, the forces applied must be:
+      \[
+        f =
+          \begin{bmatrix}
+            1 \\
+            -4 \\
+            7 \\
+            -10 \\
+            20 \\
+            -35
+          \end{bmatrix}
+      \]
+      We plot the coin and the robot locations in Figure \ref{fig:robot_collector}.
     \end{enumerate}
   \end{solution}
+
+  \begin{figure}
+    \centering
+    \includegraphics{figures/robot_collector.png}
+    \caption{Location of coins and robot with the applied forces $f$}
+    \label{fig:robot_collector}
+  \end{figure}
 
 \newpage
 \Q{Solving linear equations via QR Factorization}
@@ -246,7 +375,7 @@
 
 \newpage
 \Q{Quadratic extrapolation of a time series, using least-squares fit}
-
+  \begin{solution}
   \begin{enumerate}[label=(\alph*)]
     \item In the problem statement, we are given that $\hat{z}(t+1) = f(t+1)$ where $f(\tau) = a_2\tau^2 + a_1 \tau + a_0$ is the quadratic function which minimizes:
     \[
@@ -320,16 +449,49 @@
           1 & t + 1 & (t+1)^2
         \end{bmatrix} (F^TF)^{-1}F^T
     \]
-    which at first glance appears to depend on the value of $t$. However, using code to solve the system symbolically, we see that the result is:
+    which at first glance appears to depend on the value of $t$. However, using code to solve the system symbolically, we see that $c$ does not vary with time, and is infact given by the constant matrix:
+    \begin{align*}
+      c &=
+        \begin{bmatrix}
+          \frac{9}{10} & \frac{1}{2} & \frac{11}{60} & -\frac{1}{20} & -\frac{1}{5} & -\frac{4}{15} & -\frac{1}{4} & -\frac{3}{20} & \frac{1}{30} & \frac{3}{10}
+        \end{bmatrix} \\
+        &=
+          \begin{bmatrix}
+            0.9       &   0.5       &   0.18333333&  -0.05      &  -0.2       &  -0.26666667&  -0.25      &  -0.15      &   0.03333333&   0.3 
+          \end{bmatrix}
+    \end{align*}
+    \item See attached code for details on how we calculate the RMS. The final result is an RMS of:
     \[
-      c
+      0.050960852617736675
     \]
+    \item We plot the requested serieses in Figure \ref{fig:estimated_time_series}. There is no previous problem using inteporlation on the previous three values (as far as we are aware), so we cannot comment on the RMS.
   \end{enumerate}
+
+  \end{solution}
+
+  \begin{figure}[!ht]
+    \centering
+    \includegraphics{figures/least_squares_fit_series.png}
+    \caption{In red is the estimated values $\hat{z}$ using the model described in part (a) of the homework. In blue is the real values of the series, $z$.}
+    \label{fig:estimated_time_series}
+  \end{figure}
+
+
+
+\newpage
+\Q{Householder reflection}
+  \begin{solution}
+  Not required.
+  \end{solution}
+
+
+
+\newpage
+\Q{Vector space multiple access}
+  \begin{solution}
+  Not required.
+  \end{solution}
 \end{questions}
-
-
-
-
 
 
 
