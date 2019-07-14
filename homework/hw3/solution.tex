@@ -131,6 +131,200 @@
       \]
     \end{enumerate}
   \end{solution}
+
+\newpage
+\Q{Norm preserving implies orthonormal columns}
+
+  \begin{solution}
+    We show that if $A \in \mathbb{R}^{m \times n}$ satifies $|| Ax|| = ||x||$ for all $x \in \mathbb{R}^n$, then $A$ has orthonormal columns.
+
+    This boils down to showing that $A^TA = I$, which can be broken into two parts. Let $A_i$ be the $i$-th column of $A$. Then we need to show that $A_i^TA_i = 1$, and that $A_i^TA_j = 0$ for $i \neq j$. Let us consider the former first:
+
+    \begin{align*}
+      A_i^TA_i &= (Ae_i)^T(Ae_i) \tag{Multiplying $A$ by $e_i$ extracts the $i$-th column} \\
+      &= ||Ae_i||^2 \tag{Definition of dot product treating $Ae_i$ as a vector} \\
+      &= ||e_i||^2 \tag{Multiplication by $A$ preserves the norm} \\
+      &= 1
+    \end{align*}
+    Let us now consider the latter case. We follow the hint:
+    \begin{align*}
+    ||A(e_i + e_j)||^2 &= ||e_i + e_j|| \tag{$A$ preserves norm} \\
+    &= 2
+    \end{align*}
+    However, we also have that:
+    \begin{align*}
+    ||A(e_i + e_j)||^2 &= ||Ae_i + Ae_j||^2 \tag{Linearity of $A$} \\
+    &= ||Ae_i||^2 + ||Ae_j||^2 + 2(Ae_i)^T(Ae_j) \tag{Definition of vector norm} \\
+    &= 2 + 2(Ae_i)^T(Ae_j) \tag{Using previous results}
+    \end{align*}
+    Putting the two results together, we must have that:
+    \begin{align*}
+      2 + 2(Ae_i)^T(Ae_j) = 2 \implies 2(Ae_i)^T(Ae_j) = 0 \implies (Ae_i)^T(Ae_j) = 0 \implies A_i^TA_j = 0
+    \end{align*}
+    As such, we've now shown that $A^TA = I$.
+  \end{solution}
+
+
+\newpage
+\Q{Sensor integrity monitor}
+  \begin{solution}
+    We need to find $k \in \mathbb{R}^{k \times m}$ such that:
+      \begin{itemize}
+        \item $By = 0$ for any $y$ which is consistent.
+        \item $By \neq 0$ for any $y$ which is inconsistent.
+      \end{itemize}
+
+    The above can be summarized as follow. Requirement (1) means that given $y \in \textbf{Img}(A)$, we must have $By = 0$. This means that $\textbf{Img}(A) \subseteq \textbf{Ker}(B) $.
+
+    The second requirement specifies that for any $y \notin \textbf{Img}(A)$, we must have $By \neq 0$. Phrase another way, this says that if $By = 0$, it must be in the $\textbf{Img}(A)$. So we have $\textbf{Ker}(B) \subseteq \textbf{Img}(A)$.
+
+    As such, we're really just tring to construct a matrix $B$ whose kernal is equal to the span of of the columns of $A$. This is actually a rather straight-forward process as long as we recall the following theorem, which holds for \textit{any} matrix $C$:
+
+    \[
+      \textbf{Ker}(C^T) = \textbf{Img}(C)^{\perp}
+    \]
+    Thinking about it step-by-step, if the Kernel of $B$ is equal to the Image of $A$, it must mean that the Image of $B$ is equal to the complement of the Image of $A$. Using the formula presented abouve, the completement of the Image of $A$ is the null-space of of $A^T$.
+
+    So simply put, we just need to (1) find the $M-N$ vectors spanning the nullspace of $A^T$ and take these to be the rows of $B$. This will guarantee that the Kernel of $B$ will equal the image of $A$.
+
+    Doing exactly the process described above gives us $B \in \mathbb{R}^{2 \times 5}$ as follows:
+
+    \[
+      B =
+        \begin{bmatrix}
+          0 & -5.47259193 &  2 &  8.47259193 & 1 \\
+          0 & 6.97831636 & 6.39848918 & 2.61941742 & 3.19924459
+        \end{bmatrix}
+    \]
+
+
+  \end{solution}
+
+\newpage
+\Q{Sensor integrity monitor}
+  \begin{solution}
+    \begin{enumerate}[label=(\alph*)]
+      \item TODO
+    \end{enumerate}
+  \end{solution}
+
+\newpage
+\Q{Solving linear equations via QR Factorization}
+
+  \begin{solution}
+    The problem statement essentially boils down to solving the system $Rx = z$ where $R \in \mathbb{R}^{n \times n}$ is upper triangular and non-singular (eg, $R_{ii} \neq 0, \forall i$) and $z,x \in \mathbb{R}^n$.
+
+    The algoritm proceeds as follows:
+    \begin{enumerate}
+      \item First, let us find $x_n$. Let $R_i \in \mathbb{R}^{1 \times n}$ be the $i$-th row of $R$ as a row vector. We have:
+        \begin{align*}
+          z_n &= R_n x \\
+          &= \sum_{i=1}^n R_{ni} x_i \\
+          &= R_{nn} x_n \tag{Since $R$ is upper triangular, $R_{ni} = 0$ for $i < n$} \\
+          \implies x_n &= \frac{z_n}{R_{nn}} \tag{Note this is valid since $R_{nn} \neq 0$}
+        \end{align*}
+      \item Using a similar process, we can now find $x_{n-1}$. We have:
+        \begin{align*}
+          z_{n-1} &= R_{n-1} x \\
+          &= \sum_{i=1}^n R_{n-1,i} x_i \\
+          &= R_{n-1, n-1}x_{n-1} + R_{n-1,n} x_n \tag{Since $R$ is upper triangular, $R_{n-1,i} = 0$ for $i < n-1$} \\
+          \implies x_{n-1} &= \frac{z_n - R_{n-1,n}x_n}{R_{n-1,n}} \tag{Note this is valid since $R_{n-1,n} \neq 0$}
+        \end{align*}
+        While the equation above looks more complicated, we note that all of the variables in the RHS are known (specifically, we found the value of $x_n$ previously).
+      \item We simply continue the process from above. Let us assume that we've found the values $x_k$ for all $k > i$. Then to compute $x_i$ (the next value), we have:
+        \begin{align*}
+          z_i &= R_i x \\
+          &= \sum_{j=1}^n R_{ij} x_j \\
+          &= \sum_{j=i}^n R_{ij} x_j\tag{Since $R$ is upper triangular, $R_{ij} = 0$ for $j < i$} \\
+          \implies x_i &= \frac{z_i - \sum_{j=i+1}^n R_{ij} x_j}{R_{ii}} \tag{Note this is valid since $R_{ii} \neq 0$}
+        \end{align*}
+        We know $z_i, R_{ij}, \forall j$, and by our assumption, we know $x_k, \forall k > i$, so we know all the variables in the LHS. As such, it's relatively straight-forwrad to compute $x_i$.
+    \end{enumerate}
+
+    As such, we can see that the $x_n, x_{n-1}, \cdots, x_1$ produced by our algorithm are valid solutions to the system $z = Rx$. Furthermore, the algorithm cannot fail since $R$ is non-singular (all diagonal entries are non-zero).
+  \end{solution}
+
+\newpage
+\Q{Quadratic extrapolation of a time series, using least-squares fit}
+
+  \begin{enumerate}[label=(\alph*)]
+    \item In the problem statement, we are given that $\hat{z}(t+1) = f(t+1)$ where $f(\tau) = a_2\tau^2 + a_1 \tau + a_0$ is the quadratic function which minimizes:
+    \[
+      J = \sum_{\tau = t-9}^t (z(\tau) - f(\tau))^2
+    \]
+    We can rewrite the above in matrix form as follows:
+    \[
+      J = ||Fa - z||^2
+    \]
+    where 
+    \begin{align*}
+      z &=
+        \begin{bmatrix}
+          z(t) \\
+          z(t-1) \\
+          \vdots \\
+          z(t-9)
+        \end{bmatrix} \\
+      a &= 
+        \begin{bmatrix}
+          a_1 \\
+          a_2 \\
+          a_3
+        \end{bmatrix} \\
+      F &=
+        \begin{bmatrix}
+          1 & t & t^2 \\
+          1 & t - 1 & (t-1)^2 \\
+          \vdots & \vdots & \vdots \\
+          1 & t - 9 & (t - 9)^2
+        \end{bmatrix}
+    \end{align*}
+    If we want to solve for $a$, we can immediately arrive at the solution (based on what we've covered in lecture):
+    \[
+      a = (F^TF)^{-1}F^Tz
+    \]
+    With the above, we can write $\hat{z}(t+1)$ as follows:
+    \begin{align*}
+      \hat{z}(t+1) &= f(t+1)  \\
+      &= a_1 + a_2(t+1) + a_3(t+1)^2 \\
+      &=
+        \begin{bmatrix}
+          1 & t + 1 & (t+1) 
+        \end{bmatrix}
+        \begin{bmatrix}
+          a_1 \\
+          a_2 \\
+          a_3
+        \end{bmatrix}\\
+      &= 
+        \begin{bmatrix}
+          1 & t + 1 & (t+1) 
+        \end{bmatrix}(F^TF)^{-1}F^Tz
+    \end{align*}
+    As such, we can see that for a given value of $t$, we have:
+    \[
+      \hat{z}(t+1) =
+        \begin{bmatrix}
+          1 & t + 1 & (t+1)^2
+        \end{bmatrix} (F^TF)^{-1}F^T
+        \begin{bmatrix}
+          z(t) \\
+          z(t-1) \\
+          \vdots \\
+          z(t-9)
+        \end{bmatrix}
+    \]
+    which implies that we should have:
+    \[
+      c =  \begin{bmatrix}
+          1 & t + 1 & (t+1)^2
+        \end{bmatrix} (F^TF)^{-1}F^T
+    \]
+    which at first glance appears to depend on the value of $t$. However, using code to solve the system symbolically, we see that the result is:
+    \[
+      c
+    \]
+  \end{enumerate}
 \end{questions}
 
 
