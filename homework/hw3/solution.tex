@@ -481,7 +481,50 @@
 \newpage
 \Q{Householder reflection}
   \begin{solution}
-  Not required.
+    \begin{enumerate}[label=(\alph*)]
+      \item To show that $Q$ is orthogonal, we just need to show that $Q^TQ = I$.
+      \begin{align*}
+        Q^TQ &= (I - 2uu^T)^T(I - 2uu^T) \\
+        &= I +4(uu^T)^T(uu^T) - 2(uu^T)^T - 2uu^T \\
+        &= I + 4(uu^T)(uu^T) - 2uu^T - 2uu^T \tag{$(uv)^T = v^Tu^T$} \\
+        &= I + 4(uu^T)(uu^T) - 4uu^T \\
+        &= I
+      \end{align*}
+    \end{enumerate}
+    \item 
+      We first show that $Qu = -u$.
+      \begin{align*}
+        Qu &= (I - 2uu^T)u \\
+        &= u - 2uu^Tu \\
+        &= u - 2u \tag{Using $u^Tu = 1$} \\
+        &= -u
+      \end{align*}
+      We now consider $Qv$ where $u^Tv = 0$. We have:
+      \begin{align*}
+        Qv &= (I - 2uu^T)v \\
+        &= v - 2uu^Tv \\
+        &= v - 2u(0) \tag{$u^Tv = 0$} \\
+        &= v
+      \end{align*}
+    \item We now show that $\text{det } Q = -1$. 
+    \begin{align*}
+      \text{det } Q &= \text{det }\left(I - 2uu^T  \right) \\
+      &= \text{det } (I + (-2u)u^T) \\
+      &= \text{det }(I) + u^T\text{adj }(I)(-2u) \tag{By the matrix determinant lemma} \\
+      &= 1 - 2u^Tu \\
+      &= 1 - 2 \\
+      &= -1
+    \end{align*}
+    \item As the hint dictates, we try $u = \frac{x + \alpha e_1}{||x + \alpha e_1||}$. Using this $u$, we can compute $Qx$ and then pick $\alpha$ such that $Qx$ is parallel to $e_1$.
+    \begin{align*}
+      Qx &= (I - 2uu^T)x \\
+      &= x - 2uu^Tx \\
+      &= x - 2\left(\frac{x + \alpha e_1}{||x + \alpha e_1||}\right)\left(\frac{x + \alpha e_1}{||x + \alpha e_1||}\right)^Tx \\
+      &= x - 2 \frac{1}{||x + \alpha e_1||^2} \left(xx^T + \alpha^2e_1e_1^T + \alpha xe_1^T + \alpha e_1x^T \right)x \\
+      &= x - 2 \frac{1}{||x + \alpha e_1||^2} \left(xx^Tx + \alpha^2e_1e_1^Tx + \alpha xe_1^Tx + \alpha e_1x^Tx \right) \\
+      &= x - 2\frac{1}{||x + \alpha e_1||^2}(||x||^2 x + \alpha^2 x_1 e_1 + \alpha x_1 x + \alpha ||x||^2e_1 )
+    \end{align*}
+    Not finished.
   \end{solution}
 
 
@@ -495,6 +538,16 @@
 
 
 
+
+\includepdf[
+    %% Include all pages of the PDF
+    pages=-,
+    %% make this page have the usual page style
+    %% (you can change it to plain etc). By default pdfpages
+    %% sets the pagecommand to \pagestyle{empty}
+    pagecommand={\pagestyle{headings}}]
+%% The pdf file itself
+{HW3Code.pdf}
 
 
 
