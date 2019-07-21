@@ -111,9 +111,93 @@
       \]
       The $x$ above give use $p$ as well as $a$. 
 
-      \item We now perform the process described in part (a).
+      \item We now perform the process described in part (a). The trend parameter is:
+      \[
+        a=-0.012075460503471858
+      \]
+      A plot of the predictions as well as the observed values can be seen in Figure \ref{fig:temperatures_on_train}.
+
+      \item 
+        The RMSE of the prediction error for tomorrow's temperatures is: 
+        \[
+          0.6521628280735887
+        \]
+
+        A plot of the predicted and observed temperatures for tomorrow can be seen in Figure \ref{fig:temperatures_on_test}.
     \end{enumerate}
   \end{solution}
+
+  \begin{figure}[!ht]
+    \centering
+    \includegraphics{figures/temps_on_train.png}
+    \caption{Plot of predicted (x) and observed (o) temperatures on training data.}
+    \label{fig:temperatures_on_train}
+  \end{figure}
+  \begin{figure}[!ht]
+    \centering
+    \includegraphics{figures/temps_on_test.png}
+    \caption{Plot of predicted (x) and observed (o) temperatures on test data.}
+    \label{fig:temperatures_on_test}
+  \end{figure}
+
+\Q{Identifying a system from input/output data}
+
+  \begin{solution}
+    \begin{enumerate}[label=(\alph*)]
+      \item We wish to find $A$ such that:
+       \[
+        J = \sum_{k=1}^N || Ax^{(k)} - y^{(k)}||^2
+       \]
+       is minimized. Taking the derivative wrt. $A$, we have:
+       \begin{align*}
+        \frac{\partial J}{\partial A} &= \frac{\partial}{\partial A} \left[\sum_{k=1}^N || Ax^{(k)} - y^{(k)}||^2 \right ] \\
+        &= \sum_{k=1}^N \frac{\partial}{\partial A}\left[ || Ax^{(k)} - y^{(k)}||^2 \right ] \\
+        &= \sum_{k=1}^N \frac{\partial}{\partial A}\left[ (Ax^{(k)} - y^{(k)})^T(Ax^{(k)} - y^{(k)}) \right ] \\
+        &= 2\sum_{k=1}^N  (Ax^{(k)} - y^{(k)}) x^{(k)}^T \\
+        &= 2A \sum_{k=1}^N x^{(k)}x^{(k)}^T - 2\sum_{k=1}^N  y^{(k)}x^{(k)}^T
+       \end{align*}
+       So setting equal to $0$ and solving for $A$, we have:
+       \begin{align*}
+        A &= \left(\sum_{k=1}^N  y^{(k)}x^{(k)}^T\right)\left(\sum_{k=1}^N x^{(k)}x^{(k)}^T \right)^{-1}
+       \end{align*}
+       So we can find $A$ if and only if the second term above is invertible.
+
+       \item Implementing the method discussed above, we obtain the following $A$:
+       \[
+        \hat{A} =
+          \begin{bmatrix}
+            2.02992454 &  5.02077879 &  5.01040266 \\
+            0.0114300076 &  6.99991043 &  1.01061265 \\
+            7.04239020 & 0 &  6.94476335 \\
+            6.99765743 &  3.97592792 &  4.00242122 \\
+            9.01295285 &  1.04493868 &  6.99800225 \\
+            4.01187599 &  3.96488792 &  9.02674982 \\
+            4.98710794 &  6.97233996 &  8.03363399 \\
+            7.94249406 &  6.08754514 &  3.01735388 \\
+            0 &  8.97218370 & -0.0385465462 \\
+            1.06123427 &  8.02076138 &  7.02847693
+          \end{bmatrix}
+       \]
+       This gives us a realtive error of $0.05814323689487761$.
+    \end{enumerate}
+  \end{solution}
+
+\Q{Robust regression using the Huber penalty function}
+
+  \begin{solution}
+    \begin{enumerate}[label=(\alph*)]
+      \item We our parameter vector be $w = \begin{bmatrix} w_1 \\ 2_2 \end{bmatrix}$.
+    \end{enumerate}
+  \end{solution}
+
+\Q{Identifying a system from input/output data}
+
+  \begin{solution}
+    \begin{enumerate}[label=(\alph*)]
+      \item TODO
+    \end{enumerate}
+  \end{solution}
+
 \end{questions}
 
 \begin{comment}
