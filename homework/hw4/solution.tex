@@ -140,6 +140,7 @@
     \label{fig:temperatures_on_test}
   \end{figure}
 
+\newpage
 \Q{Identifying a system from input/output data}
 
   \begin{solution}
@@ -153,12 +154,12 @@
         \frac{\partial J}{\partial A} &= \frac{\partial}{\partial A} \left[\sum_{k=1}^N || Ax^{(k)} - y^{(k)}||^2 \right ] \\
         &= \sum_{k=1}^N \frac{\partial}{\partial A}\left[ || Ax^{(k)} - y^{(k)}||^2 \right ] \\
         &= \sum_{k=1}^N \frac{\partial}{\partial A}\left[ (Ax^{(k)} - y^{(k)})^T(Ax^{(k)} - y^{(k)}) \right ] \\
-        &= 2\sum_{k=1}^N  (Ax^{(k)} - y^{(k)}) x^{(k)}^T \\
-        &= 2A \sum_{k=1}^N x^{(k)}x^{(k)}^T - 2\sum_{k=1}^N  y^{(k)}x^{(k)}^T
+        &= 2\sum_{k=1}^N  (Ax^{(k)} - y^{(k)}) x^{(k)T} \\
+        &= 2A \sum_{k=1}^N x^{(k)}x^{(k)T} - 2\sum_{k=1}^N  y^{(k)}x^{(k)T}
        \end{align*}
        So setting equal to $0$ and solving for $A$, we have:
        \begin{align*}
-        A &= \left(\sum_{k=1}^N  y^{(k)}x^{(k)}^T\right)\left(\sum_{k=1}^N x^{(k)}x^{(k)}^T \right)^{-1}
+        A &= \left(\sum_{k=1}^N  y^{(k)}x^{(k)T}\right)\left(\sum_{k=1}^N x^{(k)}x^{(k)T} \right)^{-1}
        \end{align*}
        So we can find $A$ if and only if the second term above is invertible.
 
@@ -182,25 +183,161 @@
     \end{enumerate}
   \end{solution}
 
+\newpage
 \Q{Robust regression using the Huber penalty function}
 
   \begin{solution}
     \begin{enumerate}[label=(\alph*)]
-      \item We our parameter vector be $w = \begin{bmatrix} w_1 \\ 2_2 \end{bmatrix}$.
+      \item This is a straight-forward application of weighed iterative least squares. In particular, our weight function is given by the below at iteration $k + 1$:
+
+      \[
+        w_i(a^{(k)},b^{(k)}) = \frac{H_{\delta}(a^{(k)}t_i + b^{(k)} - x_i)}{(a^{(k)}t_i + b^{(k)} - x_i)^2}
+      \]
+      We have to be a bit careful with the denominator to make sure it does not equal $0$. Once we have the weights defined, we can use the standard update equation given by:
+      \[
+          \begin{bmatrix}
+            a^{(k+1)} \\
+            b^{(k+1)}
+          \end{bmatrix} = (A^TW(a^{(k)},b^{(k)})A)^{-1}A^TW(a^{(k)},b^{(k)})x
+      \]
+      where we have:
+      \begin{align*}
+        A &= \begin{bmatrix}
+          t_1 & 1 \\
+          \vdots & \vdots \\
+          t_N & 1
+        \end{bmatrix} \in \mathbb{R}^{N \times 2} \\
+        W &= \begin{bmatrix}
+          w_1(a, b) & 0 & \cdots & 0 \\
+          0 & w_2(a,b) & \cdots & 0 \\
+          \vdots & \vdots & \ddots & \vdots \\
+          0 & 0 & \cdots & w_N(a,b)
+        \end{bmatrix} \in \mathbb{R}^{N \times N}
+      \end{align*}
+    \item Applying the method above to ``huber\_penalty\_function\_data.m'', we arrive at the following parameter values with the Huber loss:
+    \[
+      a = -4.9920376, b = 23.5669247
+    \]
+    for a total Huber loss of $0.40706964531961987$.
+    
+
+    As for ordinary least squares, we have the following parameters:
+    \[
+      a = -3.94855818, b = 19.03697567
+    \]
+    A visualization of the results in presented in Figure \ref{fig:huber_fit}. We can see that the red line (Huber fit) matches the main data much more closely, since it is penalized less for the outliers. On the other hand, we see that the LS fit (green line) has to change slope and shift to try and accomodate the outlines, meaning the main datapints suffer.
     \end{enumerate}
   \end{solution}
 
-\Q{Identifying a system from input/output data}
+  \begin{figure}
+    \centering
+    \includegraphics{line_plots_for_huber_fit.png}
+    \caption{Plot of data as well as LS and Huber Fit}
+    \label{fig:huber_fit}    
+  \end{figure}
+
+\newpage
+\Q{Estimating a signal with interference}
 
   \begin{solution}
     \begin{enumerate}[label=(\alph*)]
-      \item TODO
+      \item We now formalize each of the methods described:
+        \begin{itemize}
+          \item In this process, the estimate $\hat{x}$ is given by:
+            \[
+              \hat{x} = (A^TA)^{-1}A^Ty
+            \]
+            since it's just a straight-forward over-determined least squares problem.
+          \item This methods consists of estimated both $\hat{x}$ and $\hat{v}$. Basically, this involves rewriting the problem $y = Ax + Bv$ as a single matrix, like below:
+          \begin{align*}
+            y &= Ax + Bv \\
+            &= \begin{bmatrix} A & B \end{bmatrix}\begin{bmatrix} x \\ v \end{bmatrix} \\
+            &= A'x'
+          \end{align*}
+          So now that we've presented it in this way, we have the solutions as:
+          \[
+            \begin{bmatrix}
+              \hat{x} \\
+              \hat{v}
+            \end{bmatrix} = (A'^TA')^{-1}A'^Ty
+          \]
+          \item This method follows the same set-up as the method above, so we re-use $A' \in \mathbb{R}^{m \times (n + p)}$ and $x' \in \mathbb{R}^{(n+p)}$. Using the same process as described, we find $\hat{x}^{(1)}$ and $\hat{v}$.
+
+          We then form the pseudo-measurement $\hat{y} = y - B\hat{v}$. We now have the system:
+          \[
+            \hat{y} = Ax
+          \]
+          and now find our \textit{true} estimate. Since this is just standard LS, we have:
+          \[
+            \hat{x} = (A^TA)^{-1}A^T\hat{y}
+          \]
+        \end{itemize}
+      \item Our first claim is that all three mothods are actually equivalent. We beging by showing what we consider is easiests first. We show that Miki and Nikola's methods lead to the same answer. 
+
+      Let's start by simplifying the most complex (Miki's) method.
+      Subtituting what we know $\hat{y}$ to be, we get:
+      \begin{align*}
+        \hat{x} &= (A^TA)^{-1}A^T(y - B\hat{v}) \tag{Subtituting $\hat{y}$} \\
+        &= (A^TA)^{-1}A^Ty - (A^TA)^{-1}A^TB\hat{v} \tag{Distributing} \\
+        &= (A^TA)^{-1}A^Ty
+      \end{align*}
+      The most interesting part here is the last line. How did we get rid of the second term? To see this, let us consider each entry of the vector $z = A^TB\hat{v} \in \mathbb{R}^{n}$. 
+      \begin{align*}
+        z_i &= a_i^T (B\hat{v}) \tag{Where $a_i$ is the $i$-th column of $A$} \\
+        &= a_i^Tb \tag{Where $b \in \textbf{img}(A)$} \\
+        &= 0 \tag{$\textbf{img}(A) \cap \textbf{img}(B) = \{ 0\}$}
+      \end{align*}
+      Where the last-line is known becase $a_i$ (a column of $A$, so $a_i$ must be in the image of $A$) is orthogonal to $z$ (a vector in the image of $B$) since the images of $A$ and $B$ don't intersect. 
+
+      From the above, we see therefore that Miki's method actually finds $\hat{x}$ which is equivalent to the one found by Nikola's method.
+
+      With that complete, let's simplify the final remaining method (Almir's). We have:
+      \begin{align*}
+        \begin{bmatrix} 
+          \hat{x} \\ \hat{v}
+        \end{bmatrix} &= (A'^TA')^{-1}A'^Ty \tag{Almir's method} \\
+        &= \left( \begin{bmatrix}
+          A^T \\ 
+          B^T
+        \end{bmatrix} 
+        \begin{bmatrix} A & B \end{bmatrix} \right)^{-1}
+        \begin{bmatrix}
+          A^T \\ 
+          B^T
+        \end{bmatrix}y \tag{Subtituing $A'$} \\
+        &= \begin{bmatrix}
+          A^TA & A^TB \\ 
+          B^TA & B^TB
+        \end{bmatrix}^{-1}
+        \begin{bmatrix}
+          A^Ty \\ 
+          B^Ty
+        \end{bmatrix} \tag{Multiplying a few things out} \\
+        &= \begin{bmatrix}
+          A^TA & 0 \\ 
+          0 & B^TB
+        \end{bmatrix}^{-1}
+        \begin{bmatrix}
+          A^Ty \\ 
+          B^Ty
+        \end{bmatrix} \tag{$A^TB = B^TA = 0$ since $\textbf{img}(A) \cap \textbf{img}(B) = \{ 0 \}$} \\
+        &= \begin{bmatrix}
+          (A^TA)^{-1} & 0 \\ 
+          0 & (B^TB)^{-1}
+        \end{bmatrix}
+        \begin{bmatrix}
+          A^Ty \\ 
+          B^Ty
+        \end{bmatrix}  \tag{Inverse of block-diagonal matrix. $A,B$ are full-rank} \\
+        \implies \hat{x} &= (A^TA)^{-1}A^Ty
+      \end{align*}
+      As such, even Almir's method is the same, mostly because we know that the images of $A$ and $B$ don't intersect.
+      \item The mothods are all the same. Still, probably worth-it to go with the simplest method, which is Nikolas \textbf{ignore and estimate} method.
     \end{enumerate}
   \end{solution}
 
 \end{questions}
 
-\begin{comment}
 \includepdf[
     %% Include all pages of the PDF
     pages=-,
@@ -209,8 +346,7 @@
     %% sets the pagecommand to \pagestyle{empty}
     pagecommand={\pagestyle{headings}}]
 %% The pdf file itself
-{HW3Code.pdf}
-\end{comment}
+{HW4Code.pdf}
 
 
 
