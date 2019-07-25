@@ -88,9 +88,9 @@
             p_2 \\
             p_1 \\
             a
-          \end{bmatrix} \in \mathbb{R}^25
+          \end{bmatrix} \in \mathbb{R}^{25}
       \]
-      What is the same of $A$. In fact, we have the following:
+      As for $A$, we have:
       \[
         A =
           \begin{bmatrix}
@@ -109,7 +109,7 @@
       \[
         x = (A^TA)^{-1}A^Ty
       \]
-      The $x$ above give use $p$ as well as $a$. 
+      The $x$ above gives us $p$ as well as $a$. 
 
       \item We now perform the process described in part (a). The trend parameter is:
       \[
@@ -243,12 +243,12 @@
     \begin{enumerate}[label=(\alph*)]
       \item We now formalize each of the methods described:
         \begin{itemize}
-          \item In this process, the estimate $\hat{x}$ is given by:
+          \item In Nikola's process, the estimate $\hat{x}_{\text{Nikola}}$ is given by:
             \[
-              \hat{x} = (A^TA)^{-1}A^Ty
+              \hat{x}_{\text{Nikola}} = (A^TA)^{-1}A^Ty
             \]
-            since it's just a straight-forward over-determined least squares problem.
-          \item This methods consists of estimated both $\hat{x}$ and $\hat{v}$. Basically, this involves rewriting the problem $y = Ax + Bv$ as a single matrix, like below:
+            since it's just a straight-forward over-determined least squares problem. Note that this always has a solution if $A$ is full-rank.
+          \item Almir's method consists of estimating both $\hat{x}_{\text{Almir}}$ and $\hat{v}$. Basically, this involves rewriting the problem $y = Ax + Bv$ as a single matrix, like below:
           \begin{align*}
             y &= Ax + Bv \\
             &= \begin{bmatrix} A & B \end{bmatrix}\begin{bmatrix} x \\ v \end{bmatrix} \\
@@ -257,11 +257,11 @@
           So now that we've presented it in this way, we have the solutions as:
           \[
             \begin{bmatrix}
-              \hat{x} \\
+              \hat{x}_{\text{Almir}} \\
               \hat{v}
             \end{bmatrix} = (A'^TA')^{-1}A'^Ty
           \]
-          \item This method follows the same set-up as the method above, so we re-use $A' \in \mathbb{R}^{m \times (n + p)}$ and $x' \in \mathbb{R}^{(n+p)}$. Using the same process as described, we find $\hat{x}^{(1)}$ and $\hat{v}$.
+          \item This method follows the same set-up as the method above, so we re-use $A' \in \mathbb{R}^{m \times (n + p)}$ and $x' \in \mathbb{R}^{(n+p)}$. Using the same process as described, we find $\hat{x}_{\text{Almir}}$ and $\hat{v}$.
 
           We then form the pseudo-measurement $\hat{y} = y - B\hat{v}$. We now have the system:
           \[
@@ -269,71 +269,127 @@
           \]
           and now find our \textit{true} estimate. Since this is just standard LS, we have:
           \[
-            \hat{x} = (A^TA)^{-1}A^T\hat{y}
+            \hat{x}_{\text{Miki}} = (A^TA)^{-1}A^T\hat{y} = (A^TA)^{-1}A^T(y - B\hat{v})
           \]
         \end{itemize}
-      \item Our first claim is that all three mothods are actually equivalent. We beging by showing what we consider is easiests first. We show that Miki and Nikola's methods lead to the same answer. 
-
-      Let's start by simplifying the most complex (Miki's) method.
-      Subtituting what we know $\hat{y}$ to be, we get:
+      \item First, we show that Miki and Nikola's methods are \textit{not} equivalent. In fact, let us consider the following system:
       \begin{align*}
-        \hat{x} &= (A^TA)^{-1}A^T(y - B\hat{v}) \tag{Subtituting $\hat{y}$} \\
-        &= (A^TA)^{-1}A^Ty - (A^TA)^{-1}A^TB\hat{v} \tag{Distributing} \\
-        &= (A^TA)^{-1}A^Ty
+        A &= \begin{bmatrix}
+          1 \\
+          0
+        \end{bmatrix} \in \mathbb{R}^{2 \times 1} \\
+        B &=
+          \begin{bmatrix}
+            1 \\
+            1
+          \end{bmatrix} \in \mathbb{R}^{2 \times 1}
       \end{align*}
-      The most interesting part here is the last line. How did we get rid of the second term? To see this, let us consider each entry of the vector $z = A^TB\hat{v} \in \mathbb{R}^{n}$. 
+      and let us suppose that we make the following measurement:
+      \[
+        y =
+          \begin{bmatrix}
+            2 \\
+            1
+          \end{bmatrix}
+      \]
+      By Nikola's method, we'll have the following $\hat{x}_{\text{Nikola}}$ estimate:
       \begin{align*}
-        z_i &= a_i^T (B\hat{v}) \tag{Where $a_i$ is the $i$-th column of $A$} \\
-        &= a_i^Tb \tag{Where $b \in \textbf{img}(A)$} \\
-        &= 0 \tag{$\textbf{img}(A) \cap \textbf{img}(B) = \{ 0\}$}
+        \hat{x}_{\text{Nikola}} &= (A^TA)^{-1}A^Ty \\
+        &=
+          \left(\begin{bmatrix}
+            1 & 0
+          \end{bmatrix}
+          \begin{bmatrix}
+            1 \\
+            0
+          \end{bmatrix}\right)^{-1}
+          \begin{bmatrix}
+            1 & 0
+          \end{bmatrix}
+          \begin{bmatrix}
+            2 \\
+            1
+          \end{bmatrix} \\
+          &= 2
       \end{align*}
-      Where the last-line is known becase $a_i$ (a column of $A$, so $a_i$ must be in the image of $A$) is orthogonal to $z$ (a vector in the image of $B$) since the images of $A$ and $B$ don't intersect. 
-
-      From the above, we see therefore that Miki's method actually finds $\hat{x}$ which is equivalent to the one found by Nikola's method.
-
-      With that complete, let's simplify the final remaining method (Almir's). We have:
+      However, by Almir's method, we have:
       \begin{align*}
+        \hat{x}_{\text{Almir}} &=
+          \left(
+            \begin{bmatrix}
+              1 & 0 \\
+              1 & 1
+            \end{bmatrix}
+            \begin{bmatrix}
+              1 & 1 \\
+              0 & 1
+            \end{bmatrix}
+          \right)^{-1}
+            \begin{bmatrix}
+              1 & 0 \\
+              1 & 1
+            \end{bmatrix}
+            \begin{bmatrix}
+              2 \\
+              1
+            \end{bmatrix} \\
+          &= \left(
+            \begin{bmatrix}
+              1 & 1 \\
+              1 & 2
+            \end{bmatrix}
+          \right)^{-1}
+          \begin{bmatrix}
+            2 \\
+            3
+          \end{bmatrix} \\
+          &=
+            \begin{bmatrix}
+              2 & -1 \\
+              -1 & 1
+            \end{bmatrix}
+            \begin{bmatrix}
+            2 \\
+            3
+          \end{bmatrix} \\
+        &= \begin{bmatrix}
+            1 \\
+            1
+           \end{bmatrix}
+      \end{align*}
+      From the above, we can clearly see that $\hat{x}_{\text{Almir}} \neq \hat{x}_{\text{Nikola}}$. As such, these two methods are not equivalent.
+
+
+      Next, we show that Miki's method is actually equivalent to Almir's method. That is, we show that $\hat{x}_{\text{Miki}} = \hat{x}_{\text{Almir}}$. First, we recall that $\hat{x}_{\text{Almir}}$ is is the unique solution satisfying the following system of equations:
+      \begin{align*}
+        A'^Ty &= A'^TA' \begin{bmatrix} \hat{x}_{\text{Almir}} \\ \hat{v} \end{bmatrix} \\
+        \implies \begin{bmatrix} A & B \end{bmatrix}^Ty &= \begin{bmatrix} A & B \end{bmatrix}^T\begin{bmatrix} A & B \end{bmatrix} \begin{bmatrix} \hat{x}_{\text{Almir}} \\ \hat{v} \end{bmatrix} \tag{Definition of $A'$} \\
+        \implies 
         \begin{bmatrix} 
-          \hat{x} \\ \hat{v}
-        \end{bmatrix} &= (A'^TA')^{-1}A'^Ty \tag{Almir's method} \\
-        &= \left( \begin{bmatrix}
-          A^T \\ 
-          B^T
-        \end{bmatrix} 
-        \begin{bmatrix} A & B \end{bmatrix} \right)^{-1}
-        \begin{bmatrix}
-          A^T \\ 
-          B^T
-        \end{bmatrix}y \tag{Subtituing $A'$} \\
-        &= \begin{bmatrix}
-          A^TA & A^TB \\ 
-          B^TA & B^TB
-        \end{bmatrix}^{-1}
-        \begin{bmatrix}
-          A^Ty \\ 
+          A^Ty \\
           B^Ty
-        \end{bmatrix} \tag{Multiplying a few things out} \\
-        &= \begin{bmatrix}
-          A^TA & 0 \\ 
-          0 & B^TB
-        \end{bmatrix}^{-1}
+        \end{bmatrix} &= 
         \begin{bmatrix}
-          A^Ty \\ 
-          B^Ty
-        \end{bmatrix} \tag{$A^TB = B^TA = 0$ since $\textbf{img}(A) \cap \textbf{img}(B) = \{ 0 \}$} \\
-        &= \begin{bmatrix}
-          (A^TA)^{-1} & 0 \\ 
-          0 & (B^TB)^{-1}
-        \end{bmatrix}
-        \begin{bmatrix}
-          A^Ty \\ 
-          B^Ty
-        \end{bmatrix}  \tag{Inverse of block-diagonal matrix. $A,B$ are full-rank} \\
-        \implies \hat{x} &= (A^TA)^{-1}A^Ty
+        A^TA\hat{x}_{\text{Almir}} + A^TB\hat{v} \\
+        B^TA\hat{x}_{\text{Almir}} + B^TB\hat{v}
+        \end{bmatrix} \tag{Matrix Multiplication} \\
+        \implies A^TB\hat{v} &= A^Ty - A^TA\hat{x}_{\text{Almir}} \tag{Taking just the top system}
       \end{align*}
-      As such, even Almir's method is the same, mostly because we know that the images of $A$ and $B$ don't intersect.
-      \item The mothods are all the same. Still, probably worth-it to go with the simplest method, which is Nikolas \textbf{ignore and estimate} method.
+      However, we note that following:
+      \begin{align*}
+        \hat{x}_{\text{Miki}} &= (A^TA)^{-1}A^T(y - B\hat{v}) \\
+        &= (A^TA)^{-1}(A^Ty - A^TB\hat{v}) \tag{Distributing $A^T$} \\
+        &= (A^TA)^{-1}(A^Ty - (A^Ty - A^TA\hat{x}_{\text{Almir}})) \tag{Subtituting results from above} \\
+        &= (A^TA)^{-1 }(A^TA)\hat{x}_{\text{Almir}} \tag{Simplifying} \\ 
+        &= \hat{x}_{\text{Almir}}
+      \end{align*}
+      As such, we can see that $\hat{x}_{\text{Miki}} = \hat{x}_{\text{Almir}}$ as expected.
+
+      \item Almir's method works the best. It is equivalent to Miki's, but with less steps, and should provide better answers. Note that any solution $\hat{x}_{\text{Nikola}}$ will always lead to $\hat{y} \in \textbf{image}(A)$. However, with Almir's method, the only restriction is that $\hat{y} \in \textbf{image}(A) \bigcup \textbf{image}(B)$. As such, any observations $y$ where $B^Ty \neq 0$ will be better approximated by Almir's method (since it can accuraltey attribute some part of $y$ to the output space of $B$).
+
+      However, it is interesting to note that Almir's method can be significantly more expensive than Nikola's, since it might require inverting a matrix that is twice as big.
     \end{enumerate}
+
   \end{solution}
 
 \end{questions}
