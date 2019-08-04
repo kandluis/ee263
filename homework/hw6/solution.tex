@@ -659,6 +659,70 @@
 
 
   \newpage
+  \Q{Jordan form of a block matrix}
+  \begin{solution}
+    \begin{enumerate}[label=(\alph*)]
+      \item 
+        First, we claim claim that the vectors:
+        \[
+          \hat{v}_i = \begin{bmatrix} v_i \\ 0 \end{bmatrix} \in \mathbb{R}^{2n}
+        \]
+        Are eigenvectors of $C$, with eigenvalue $\lambda_i$. We can see this directly with:
+        \begin{align*}
+          C\hat{v}_i &= \begin{bmatrix} A & I \\ 0 & A\end{bmatrix}\begin{bmatrix} v_i \\ 0 \end{bmatrix}  \\
+          &= \begin{bmatrix} Av_i + I0 \\ 0v_i + A0 \end{bmatrix} \\
+          &= \lambda_i \hat{v}_i
+        \end{align*}
+        As such, we have $n$ eigenvectors with unique eigevalues. Since each vector spans only 1-dimension, this gives us the following Jordan form for $C$.
+        \begin{align*}
+          J = \begin{bmatrix} J_1 & & \\
+          & \ddots & \\
+          && J_n \end{bmatrix} \in \mathbb{R}^{2n \times 2n}
+        \end{align*}
+        where we have:
+        \[
+          J_i = \begin{bmatrix} \lambda_i & 1 \\
+          0 & \lambda_i \end{bmatrix} \in \mathbb{R}^{2 \times 2}
+        \]
+      \item
+        Now that we've found $J$, we are asked to find the matrix $T$ such that $J = T^{-1}CT$. From lecture, we know that $T$ is given by:
+        \[
+          T = \begin{bmatrix} \hat{v}_{1} & \hat{v}'_1 & \hat{v}_2 & \hat{v}'_2 & \cdots & \hat{v}_n & \hat{v}'_n \end{bmatrix} \in \mathbb{R}^{2n \times 2n}
+        \]
+        where we have that:
+        \begin{align*}
+          C\hat{v}'_i &= \hat{v}_i + \lambda_i \hat{v}'_i \\
+          \implies \hat{v}'_i &= (C - \lambda_iI)^{-1}\hat{v}_i \\
+          &= \begin{bmatrix} A-I & I \\ 0 & A-I \end{bmatrix}^{-1}\hat{v} \\
+          &= \begin{bmatrix} (A-I)^{-1} & -(A-I)^{-1}(A-I)^{-1} \\ 0 & (A-I)^{-1} \end{bmatrix} \begin{bmatrix} v_i \\ 0 \end{bmatrix} \\
+          &= \begin{bmatrix} (A-I)^{-1}v_i \\ 0 \end{bmatrix} \\
+          &= \begin{bmatrix} -(I + A + A^2 + \cdots)v_i \\ 0 \end{bmatrix} \\
+          &= \begin{bmatrix} -(1 + \lambda_i + \lambda_i^2 + \cdots)v_i \\ 0 \end{bmatrix} \\
+          &= \frac{1}{\lambda_i - 1} \hat{v}_i
+        \end{align*}
+    \end{enumerate}
+  \end{solution}
+
+  \newpage
+  \Q{Affine dynamical systems}
+  \begin{solution}
+    We need to define a new lineary dynamical system in terms of $\tilde{x}, u, \tilde{y}$. We have:
+    \begin{align*}
+      \dot{\tilde{x}} &= \frac{d}{dt}(x + A^{-1}f) \\
+      &= \dot{x} \tag{$A$ and $f$ don't vary with time} \\
+      &= Ax + Bu + f \tag{give} \\
+      &= A(\tilde{x} - A^{-1}f) + Bu + f \tag{Definition of $\tilde{x}$} \\
+      &= A\tilde{x} + Bu
+    \end{align*}
+    The above immediately gives us the dynamics of our new system. Doing the same for the output, we have:
+    \begin{align*}
+      \tilde{y} &= y - g + CA^{-1}f \tag{Definition of $\tilde{y}$} \\
+      &= Cx + Du + g - g + CA^{-1}f \tag{Definition of $y$} \\
+      &= C(x + A^{-1}f) + Du \tag{Groping like terms} \\
+      &= C\tilde{x} + Du \tag{Definition of $\tilde{x}$}
+    \end{align*}
+    And so, we have our output equations.
+  \end{solution}
 \end{questions}
 
 
