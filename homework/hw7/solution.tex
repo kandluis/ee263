@@ -274,27 +274,92 @@
       \item
         We restate the problem in a framework we're familiar with. In fact, our goal is to:
         \begin{align*}
-        \text{minimize} &  & ||w|| \\
-        \text{subject to } &  & \frac{1}{T}||Aw||^2 = 1
+        \text{minimize} &  & ||w||^2 \\
+        \text{subject to } &  & \frac{1}{T}||Y^Tw||^2 = 1
         \end{align*}
         Note that this is equivalent to:
         \begin{align*}
-        \text{minimize} &  & ||w||^2 \\
-        \text{subject to } &  \frac{1}{T}||Aw||^2 = 1
+        \text{minimize} &  & \frac{1}{2}||w||^2 \\
+        \text{subject to } &  & ||Y^Tw||^2 = T
         \end{align*}
         where:
         \[
-          A =
+          Y =
             \begin{bmatrix}
-              \cdots & y_1^T & \cdots \\
-              \cdots & y_2^T & \cdots \\
-              \cdots & \vdots & \cdots \\
-              \cdots & y_T^T & \cdots
-            \end{bmatrix} \in \mathbb{R}^{T \times n}
+              &&& \\
+              \vert & \vert &  & \vert \\
+              y_1 & y_2 & \cdots & y_T \\
+              \vert & \vert &  & \vert \\
+              &&& 
+            \end{bmatrix} \in \mathbb{R}^{n \times T}
         \]
-        
+        The above inequality leads rise to the following Lagrangian:
+        \[
+          L(w, \lambda) = \frac{1}{2}||w||^2 + \lambda (||Y^Tw||^2 - T)
+        \]
+        and taking derivates, we have the following optimality conditions:
+        \begin{align*}
+          \nabla L_w = w + \lambda YY^Tw  = 0 \\
+          \nabla L_{\lambda} = w^TYY^Tw - T = 0
+        \end{align*}
+        The first condition implies that our solution $w$ must be an eigenvector of $YY^T$ since we have:
+        \[
+          YY^Tw = -\frac{1}{\lambda} w
+        \]
+        Let $v_i$ be such an eigenvector, with eigenvalue $\lambda_i$. Then by the second condition, plugging $w = v_i$, we have:
+        \[
+          v_i^TYY^Tv_i - T = \lambda_i||v_i||^2 - T \\
+          \implies ||v_i||^2 = \frac{T}{\lambda_i}
+        \]
+        Since our goal is to minimize $||v_i||^2$, and given $T$ fixed, the second condition implies that we must choose $w = v$ as the eigenvector with the largest eigenvalue.
+
+        As such, let $v_1$ be the vector with eigenvalue $\lambda_1 = \max_i\{\lambda_i\}$ (this is unique if the eigenvalues are distinct, otherwise note). Then our $w$ will be given by:
+        \[
+          w = \frac{T}{\lambda_i} \frac{v_1}{||v_1||}
+        \]
+        In the above, we simply make sure that the length of our chosen vector satisfies the last condition.
+
+      \item
+        We apply our method as described above. Our $w$ is given by:
+        \[
+          w = 
+            \begin{bmatrix}
+              -0.00723673610484132 \\
+              -0.0215465730774432 \\
+              0.00276054423894599 \\
+              0.00445883002657630 \\
+              -0.0142168567061821 \\
+              0.0148725035632431 \\
+              0.0174363984377083 \\
+              -0.000841241581701471 \\
+              0.00370664530172645 \\
+              0.00282072925213337 \\
+              -0.00314005727052161 \\
+              0.00835470364239948 \\
+              -0.00707868337950637 \\
+              0.0281116810022352 \\
+              -0.00307470864581426 \\
+              0.00234891789799632 \\
+              0.0136042058350907 \\
+              0.00226861097845394 \\
+              -0.00206656065858226 \\
+              -0.0106556910541729 \\
+            \end{bmatrix}
+        \]
+        The requested histogram can be seen in Figure \ref{fig:blind_signal}. We can clearly see that we have two peaks. We compute the error rate of our model, which turns out to be $2.9\%$.
+
+
+        For the above, we used the code:
+        \lstinputlisting{data/problem3.m}
     \end{enumerate}
   \end{solution}
+
+  \begin{figure}[hpb!]
+    \centering
+    \includegraphics[scale=0.4]{data/blind_signal.jpg}
+    \caption{Histogram of estimated signal values using our weight vector.}
+    \label{fig:blind_signal}
+  \end{figure}
 
   \newpage
   \Q{Simultaneously estimating student ability and exercise difficulty}
@@ -437,6 +502,22 @@
     \caption{Plot of events colored by delta in scores between (100m, long jump, 100m hurdles) and (shot put, discus, javelin).}
     \label{fig:intensity_plot_delta}
   \end{figure}
+
+  \newpage
+  \Q{Minimum energy required to steer the state to zero}
+  \begin{solution}
+    TODO
+  \end{solution}
+
+  \newpage
+  \Q{Minimum energy required to steer the state to zero}
+  \begin{solution}
+    \begin{enumerate}[label=(\alph*)]
+      \item The minimum number of sensors required for such an observer is $3$.
+      \item
+        The minimum degree observer is $j = 1$.
+    \end{enumerate}
+  \end{solution}
 
 \end{questions}
 
